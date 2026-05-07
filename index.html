@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArchWise — AI-Powered System Design Interview Simulator</title>
+  <meta name="description" content="Practice system design interviews with an AI interviewer. Draw on the whiteboard, use voice interaction, and get real-time architectural feedback." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Geist', 'Inter', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8a',
+            },
+            surface: {
+              900: '#060a12', 800: '#0b1120', 700: '#111827',
+              600: '#1a2235', 500: '#212c3f', 400: '#2d3a50',
+            },
+            indigo: {
+              400: '#818cf8', 500: '#6366f1', 600: '#4f46e5',
+            },
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.6s ease forwards',
+            'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'gradient-x': 'gradientX 4s ease infinite',
+            'shimmer': 'shimmer 2.5s linear infinite',
+            'spin-slow': 'spin 12s linear infinite',
+            'counter': 'counter 2s ease-out forwards',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #060a12;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0b1120; }
+    ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 3px; }
+
+    /* Three.js canvas — fixed behind all content */
+    #three-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* All page content on top of canvas */
+    .layer { position: relative; z-index: 10; }
+
+    /* ── Keyframe Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 24px 2px rgba(59,130,246,0.3); }
+      50%       { box-shadow: 0 0 48px 8px rgba(59,130,246,0.6); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-12px); }
+    }
+    @keyframes gradientX {
+      0%, 100% { background-position: 0% 50%; }
+      50%       { background-position: 100% 50%; }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #a78bfa 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientX 4s ease infinite;
+    }
+
+    /* Glass card */
+    .glass {
+      background: rgba(11, 17, 32, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Shimmer border card */
+    .shimmer-border {
+      position: relative;
+      overflow: hidden;
+    }
+    .shimmer-border::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(59,130,246,0.25) 50%, transparent 60%);
+      background-size: 200% 100%;
+      animation: shimmer 2.5s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Dot grid background */
+    .dot-bg {
+      background-image: radial-gradient(rgba(59,130,246,0.18) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Glow button */
+    .btn-glow {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .btn-glow::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1, #3b82f6);
+      border-radius: inherit;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .btn-glow:hover::after { opacity: 1; }
+
+    /* Feature icon glow */
+    .icon-glow {
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    /* Section visibility (for GSAP) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+    }
+
+    /* Pricing highlight */
+    .pricing-popular {
+      background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(99,102,241,0.15));
+      border-color: rgba(59,130,246,0.5) !important;
+    }
+
+    /* Testimonial gradient border */
+    .testimonial-card {
+      background: linear-gradient(#0b1120, #0b1120) padding-box,
+                  linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.1), rgba(59,130,246,0.3)) border-box;
+      border: 1px solid transparent;
+    }
+
+    /* Navbar */
+    #navbar {
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+    }
+    #navbar.scrolled {
+      background: rgba(6,10,18,0.88) !important;
+      backdrop-filter: blur(20px);
+      border-bottom-color: rgba(255,255,255,0.07) !important;
+    }
+
+    /* Stats counter */
+    .stat-number {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Mobile menu */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Progress bar at top */
+    #scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      z-index: 1000;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Floating label on input */
+    .form-group input:focus + label,
+    .form-group input:not(:placeholder-shown) + label,
+    .form-group textarea:focus + label,
+    .form-group textarea:not(:placeholder-shown) + label {
+      transform: translateY(-140%) scale(0.8);
+      color: #60a5fa;
+    }
+    .form-group label {
+      position: absolute;
+      left: 12px;
+      top: 14px;
+      color: #ffffff;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      transform-origin: left center;
+    }
+
+    /* Step connector line */
+    .step-connector {
+      position: absolute;
+      top: 28px;
+      left: calc(50% + 28px);
+      width: calc(100% - 56px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(59,130,246,0.6), rgba(99,102,241,0.2));
+    }
+
+    /* Tag pill */
+    .tag {
+      font-size: 0.6875rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.25);
+      color: #93c5fd;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Orbit rings (decorative) */
+    .orbit-ring {
+      border: 1px solid rgba(59,130,246,0.12);
+      border-radius: 50%;
+      position: absolute;
+      animation: spin 20s linear infinite;
+    }
+    .orbit-ring:nth-child(2) { animation-duration: 30s; animation-direction: reverse; }
+    .orbit-ring:nth-child(3) { animation-duration: 45s; }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Select dropdown option dark theming */
+    select option {
+      background-color: #0b1120;
+      color: #ffffff;
+    }
+
+    /* Ensure btn-glow text stays white regardless of stacking context */
+    .btn-glow { color: #ffffff; }
+
+    /* ── Theme toggle icons ── */
+    #theme-icon-moon { display: none; }
+    html.light #theme-icon-sun  { display: none; }
+    html.light #theme-icon-moon { display: block; }
+
+    /* ══════════════════════════════════════════════════
+       LIGHT MODE OVERRIDES
+    ══════════════════════════════════════════════════ */
+    html.light body {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    /* Scrollbar */
+    html.light ::-webkit-scrollbar-track { background: #e2e8f0; }
+
+    /* Navbar */
+    html.light #navbar { background: rgba(248,250,252,0.88) !important; }
+    html.light #navbar.scrolled {
+      background: rgba(248,250,252,0.97) !important;
+      border-bottom-color: rgba(15,23,42,0.1) !important;
+    }
+    html.light #mobile-menu {
+      background: rgba(248,250,252,0.98) !important;
+      border-top-color: rgba(15,23,42,0.08) !important;
+    }
+    html.light nav .text-white,
+    html.light nav [class*="text-white"] { color: #334155 !important; }
+    html.light #theme-toggle { color: #334155 !important; }
+    html.light #theme-toggle:hover { background: rgba(15,23,42,0.06) !important; }
+
+    /* Section backgrounds → transparent (body bg shows through) */
+    html.light section {
+      background: transparent !important;
+      border-top-color: rgba(15,23,42,0.08) !important;
+    }
+    html.light .dot-bg {
+      background-image: radial-gradient(rgba(59,130,246,0.12) 1px, transparent 1px) !important;
+    }
+
+    /* Glass cards → white */
+    html.light .glass {
+      background: rgba(255,255,255,0.92) !important;
+      border-color: rgba(15,23,42,0.08) !important;
+    }
+
+    /* Surface-* backgrounds → white */
+    html.light [class*="bg-surface-"] { background: #ffffff !important; }
+
+    /* Borders */
+    html.light [class*="border-white/"] { border-color: rgba(15,23,42,0.1) !important; }
+
+    /* Headings */
+    html.light h1, html.light h2, html.light h3, html.light h4 { color: #0f172a !important; }
+
+    /* Body text in sections */
+    html.light section .text-white,
+    html.light section [class*="text-white"] { color: #0f172a !important; }
+    html.light section p  { color: #475569 !important; }
+    html.light section li { color: #475569 !important; }
+
+    /* Accent text — keep brand colors readable on light bg */
+    html.light .text-green-400  { color: #16a34a !important; }
+    html.light .text-indigo-400 { color: #4f46e5 !important; }
+    html.light .text-brand-400, html.light [class*="text-brand-"] { color: #1d4ed8 !important; }
+
+    /* Always keep white text on coloured button/badge backgrounds */
+    html.light .btn-glow { color: #ffffff !important; }
+    html.light [class*="bg-brand-"]  { color: #ffffff !important; }
+    html.light [class*="bg-green-"]  { color: inherit; }
+
+    /* Tag pill */
+    html.light .tag {
+      background: rgba(37,99,235,0.1) !important;
+      border-color: rgba(37,99,235,0.25) !important;
+      color: #1d4ed8 !important;
+    }
+
+    /* Testimonial card */
+    html.light .testimonial-card {
+      background: linear-gradient(#ffffff, #ffffff) padding-box,
+                  linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.1), rgba(59,130,246,0.3)) border-box !important;
+    }
+
+    /* Forms */
+    html.light input, html.light textarea {
+      background: #ffffff !important;
+      border-color: rgba(15,23,42,0.15) !important;
+      color: #0f172a !important;
+    }
+    html.light select {
+      background-color: #ffffff !important;
+      border-color: rgba(15,23,42,0.15) !important;
+      color: #0f172a !important;
+    }
+    html.light select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    html.light ::placeholder { color: #94a3b8 !important; }
+
+    /* Footer */
+    html.light footer .text-white,
+    html.light footer [class*="text-white"] { color: #334155 !important; }
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div id="scroll-progress"></div>
+
+<!-- Three.js canvas (fixed behind everything) -->
+<canvas id="three-canvas"></canvas>
+
+<!-- ══════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════ -->
+<nav id="navbar" class="layer fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between gap-6">
+
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-2.5 shrink-0">
+      <div class="h-7 w-7 rounded-lg bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-900/50">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 11L7 3L12 11" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 8h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="font-display font-bold text-white text-[15px] tracking-tight">ArchWise</span>
+      <span class="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/25 font-mono">beta</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#why" class="px-3 py-1.5 text-sm text-white hover:text-white transition-colors rounded-lg hover:bg-white/5">Why</a>
+      <a href="#features" class="px-3 py-1.5 text-sm text-white hover:text-white transition-colors rounded-lg hover:bg-white/5">Features</a>
+      <a href="#how-it-works" class="px-3 py-1.5 text-sm text-white hover:text-white transition-colors rounded-lg hover:bg-white/5">How It Works</a>
+      <!-- <a href="#pricing" class="px-3 py-1.5 text-sm text-white hover:text-white transition-colors rounded-lg hover:bg-white/5">Pricing</a> -->
+      <a href="#about" class="px-3 py-1.5 text-sm text-white hover:text-white transition-colors rounded-lg hover:bg-white/5">About</a>
+    </div>
+
+    <!-- CTA -->
+    <div class="flex items-center gap-3 shrink-0">
+      <a href="#contact" class="hidden sm:inline-flex text-sm text-white hover:text-white transition-colors">Contact</a>
+
+      <!-- Theme toggle -->
+      <button id="theme-toggle" aria-label="Toggle theme" class="p-1.5 rounded-lg hover:bg-white/5 text-white transition-colors">
+        <!-- Sun — visible in dark mode -->
+        <svg id="theme-icon-sun" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <!-- Moon — visible in light mode -->
+        <svg id="theme-icon-moon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <a href="https://archwise.konnecthr.online/login" target="_blank" rel="noopener noreferrer" class="btn-glow px-4 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-sm font-medium transition-colors" style="color:#fff">
+        Start
+      </a>
+      <!-- Mobile menu toggle -->
+      <button id="mobile-menu-toggle" class="md:hidden p-1.5 rounded-lg hover:bg-white/5 text-white" aria-label="Menu">
+        <svg id="menu-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="15" y2="6"/>
+          <line x1="3" y1="12" x2="15" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden border-t border-white/5 bg-surface-900/95 backdrop-blur-xl">
+    <div class="px-5 py-4 space-y-1">
+      <a href="#why" class="block py-2 text-sm text-white hover:text-white transition-colors">Why ArchWise</a>
+      <a href="#features" class="block py-2 text-sm text-white hover:text-white transition-colors">Features</a>
+      <a href="#how-it-works" class="block py-2 text-sm text-white hover:text-white transition-colors">How It Works</a>
+      <!-- <a href="#pricing" class="block py-2 text-sm text-white hover:text-white transition-colors">Pricing</a> -->
+      <a href="#about" class="block py-2 text-sm text-white hover:text-white transition-colors">About</a>
+      <a href="#contact" class="block py-2 text-sm text-white hover:text-white transition-colors">Contact</a>
+      <div class="pt-2 border-t border-white/5">
+        <a href="https://archwise.konnecthr.online/login" target="_blank" rel="noopener noreferrer" class="block w-full text-center py-2.5 rounded-lg bg-brand-600 text-sm font-medium" style="color:#fff">Start</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section id="hero" class="layer min-h-screen flex items-center pt-14">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-28 w-full">
+    <div class="max-w-2xl">
+
+      <!-- Eyebrow -->
+      <div class="hero-eyebrow flex items-center gap-2 mb-6 opacity-0">
+        <span class="h-px w-8 bg-brand-500"></span>
+        <span class="tag">AI-Powered Interview Prep</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="hero-headline font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight mb-6 opacity-0">
+        Design Systems.<br/>
+        <span class="gradient-text">Not Just Code.</span>
+      </h1>
+
+      <!-- Sub -->
+      <p class="hero-sub text-white text-lg sm:text-xl leading-relaxed mb-6 max-w-lg opacity-0">
+        ArchWise is your complete system design platform — learn HLD &amp; LLD concepts through
+        structured resources, then sharpen your skills with AI-powered mock interviews that
+        think like real senior engineers.
+      </p>
+
+      <!-- Learning status badges -->
+      <div class="hero-learn-badge flex flex-wrap items-center gap-2 mb-8 opacity-0">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-green-400 text-xs font-mono">
+          <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
+          HLD Concepts Live
+        </span>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-700/60 border border-white/10 text-white text-xs font-mono">
+          LLD Coming Soon
+        </span>
+      </div>
+
+      <!-- CTAs -->
+      <div class="hero-ctas flex flex-wrap gap-3 mb-14 opacity-0">
+        <a href="https://archwise.konnecthr.online/login" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm transition-all hover:shadow-lg hover:shadow-brand-900/50 hover:-translate-y-0.5">
+          Start
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7h8M8 4l3 3-3 3"/>
+          </svg>
+        </a>
+        <a href="#how-it-works" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white hover:text-white hover:border-white/20 text-sm font-medium transition-all hover:-translate-y-0.5">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polygon points="5,3 13,7 5,11" fill="currentColor" stroke="none"/>
+          </svg>
+          See How It Works
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <!-- <div class="hero-stats flex flex-wrap gap-4 opacity-0">
+        <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
+          <div class="h-8 w-8 rounded-lg bg-brand-500/15 border border-brand-500/25 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="5" r="2.5" stroke="#60a5fa" stroke-width="1.5"/>
+              <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="stat-number text-white font-bold text-base font-mono" data-target="2400">0</p>
+            <p class="text-white text-xs">Engineers Trained</p>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
+          <div class="h-8 w-8 rounded-lg bg-green-500/15 border border-green-500/25 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="stat-number text-white font-bold text-base font-mono" data-target="94">0</p>
+            <p class="text-white text-xs">% Interview Success</p>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
+          <div class="h-8 w-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="#818cf8" stroke-width="1.5"/>
+              <path d="M5 6h4M5 8.5h2.5" stroke="#818cf8" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="stat-number text-white font-bold text-base font-mono" data-target="50">0</p>
+            <p class="text-white text-xs">Design Problems</p>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
+    <span class="text-xs text-white tracking-widest uppercase">Scroll</span>
+    <div class="h-6 w-[1px] bg-gradient-to-b from-gray-500 to-transparent animate-pulse"></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     WHY / PHILOSOPHY
+══════════════════════════════════════════════════ -->
+<section id="why" class="layer bg-surface-900/95 backdrop-blur-sm border-t border-white/5 py-24">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <!-- Section label -->
+    <div class="reveal flex items-center gap-3 mb-4">
+      <span class="h-px w-6 bg-brand-500"></span>
+      <span class="tag">The Philosophy</span>
+    </div>
+
+    <!-- Main quote -->
+    <div class="reveal max-w-3xl mb-16">
+      <blockquote class="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-white leading-snug mb-6">
+        "AI can already write code.<br/>
+        <span class="text-white">But it can't yet</span>
+        <span class="gradient-text"> design systems that scale.</span>"
+      </blockquote>
+      <p class="text-white text-lg leading-relaxed max-w-xl">
+        That's your competitive edge. Architectural thinking — knowing when to use a cache,
+        how to design for failure, how to communicate trade-offs — is the skill AI can't replace.
+        We built ArchWise to develop exactly that: through curated HLD &amp; LLD learning resources
+        and AI-powered mock interviews that simulate real interview pressure, end to end.
+      </p>
+    </div>
+
+    <!-- Three pillars -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-brand-500/20 transition-colors group">
+        <div class="h-10 w-10 rounded-xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center mb-4 group-hover:bg-brand-500/25 transition-colors">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M9 2L2 6l7 4 7-4-7-4z" stroke="#60a5fa" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M2 12l7 4 7-4" stroke="#60a5fa" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M2 9l7 4 7-4" stroke="#60a5fa" stroke-width="1.5" stroke-linejoin="round" opacity="0.5"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Technical Depth</h3>
+        <p class="text-white text-sm leading-relaxed">
+          Go beyond surface-level answers. Learn the internals of databases, caches, message queues,
+          and CDNs — and why each choice matters.
+        </p>
+      </div>
+
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-indigo-500/20 transition-colors group" style="transition-delay:0.1s">
+        <div class="h-10 w-10 rounded-xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center mb-4 group-hover:bg-indigo-500/25 transition-colors">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <circle cx="9" cy="9" r="7" stroke="#818cf8" stroke-width="1.5"/>
+            <circle cx="9" cy="9" r="3" stroke="#818cf8" stroke-width="1.5"/>
+            <path d="M9 2v4M9 12v4M2 9h4M12 9h4" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Systems Thinking</h3>
+        <p class="text-white text-sm leading-relaxed">
+          See the whole picture. Understand how components interact, where bottlenecks emerge,
+          and how to reason about scale from 100 to 100M users.
+        </p>
+      </div>
+
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-green-500/20 transition-colors group" style="transition-delay:0.2s">
+        <div class="h-10 w-10 rounded-xl bg-green-500/15 border border-green-500/20 flex items-center justify-center mb-4 group-hover:bg-green-500/25 transition-colors">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M3 9h12M9 3l6 6-6 6" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+            <path d="M5 5c0 2.2 1.8 4 4 4s4-1.8 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Clear Communication</h3>
+        <p class="text-white text-sm leading-relaxed">
+          Interviews aren't just technical. Learn to narrate your thought process, handle
+          clarifying questions, and present trade-offs with confidence.
+        </p>
+      </div>
+    </div>
+
+    <!-- Stats band -->
+    <div class="reveal glass rounded-2xl border border-white/5 p-8 grid grid-cols-3 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <p class="font-mono font-bold text-3xl text-white mb-1">
+          <span class="stat-count" data-target="85">0</span><span>%</span>
+        </p>
+        <p class="text-white text-xs leading-tight">of senior eng. interviews include system design</p>
+      </div>
+      <div class="text-center">
+        <p class="font-mono font-bold text-3xl text-white mb-1">
+          3<span class="text-brand-400">x</span>
+        </p>
+        <p class="text-white text-xs leading-tight">more likely to pass after structured practice</p>
+      </div>
+      <!-- <div class="text-center">
+        <p class="font-mono font-bold text-3xl text-white mb-1">
+          <span class="stat-count" data-target="40">0</span><span>+</span>
+        </p>
+        <p class="text-white text-xs leading-tight">HLD concepts covered across all problems</p>
+      </div> -->
+      <div class="text-center">
+        <p class="font-mono font-bold text-3xl text-white mb-1">
+          Top<span class="text-brand-400">1%</span>
+        </p>
+        <p class="text-white text-xs leading-tight">engineers all share one trait: architectural intuition</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════════════ -->
+<section id="how-it-works" class="layer dot-bg bg-surface-900/80 border-t border-white/5 py-24">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="reveal text-center mb-16">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <span class="h-px w-6 bg-brand-500"></span>
+        <span class="tag">Process</span>
+        <span class="h-px w-6 bg-brand-500"></span>
+      </div>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">How a session works</h2>
+      <p class="text-white max-w-lg mx-auto">Four steps from blank canvas to expert-level feedback in under an hour.</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Step 1 -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 relative group">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-9 w-9 rounded-lg bg-brand-500/15 border border-brand-500/20 flex items-center justify-center text-brand-400 font-mono font-bold text-sm">01</div>
+          <div class="h-px flex-1 bg-white/5"></div>
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <rect x="2" y="3" width="14" height="12" rx="2" stroke="#60a5fa" stroke-width="1.5"/>
+            <path d="M6 7h6M6 10h4" stroke="#60a5fa" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white text-sm mb-2">Pick a Problem</h3>
+        <p class="text-white text-xs leading-relaxed">Choose from 50+ real-world problems: design Twitter, Netflix, Uber, a URL shortener, and more.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 group" style="transition-delay:0.1s">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-9 w-9 rounded-lg bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-mono font-bold text-sm">02</div>
+          <div class="h-px flex-1 bg-white/5"></div>
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M3 13l4-4 3 3 5-6" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="2" y="2" width="14" height="14" rx="2" stroke="#818cf8" stroke-width="1.5" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white text-sm mb-2">Draw & Explain</h3>
+        <p class="text-white text-xs leading-relaxed">Use the Excalidraw whiteboard and your voice to draw your architecture and talk through every decision.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 group" style="transition-delay:0.2s">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-9 w-9 rounded-lg bg-green-500/15 border border-green-500/20 flex items-center justify-center text-green-400 font-mono font-bold text-sm">03</div>
+          <div class="h-px flex-1 bg-white/5"></div>
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M9 4v4l3 3" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9" cy="9" r="7" stroke="#34d399" stroke-width="1.5" opacity="0.4"/>
+            <path d="M6 2.5c1-.4 2-.5 3-.5" stroke="#34d399" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white text-sm mb-2">AI Interviews You</h3>
+        <p class="text-white text-xs leading-relaxed">GPT-4o acts as your interviewer — asking clarifying questions, probing edge cases, and challenging your assumptions.</p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 group" style="transition-delay:0.3s">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-9 w-9 rounded-lg bg-amber-500/15 border border-amber-500/20 flex items-center justify-center text-amber-400 font-mono font-bold text-sm">04</div>
+          <div class="h-px flex-1 bg-white/5"></div>
+        </div>
+        <div class="h-10 w-10 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M3 14l3-3 2 2 4-5 3 3" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="2" y="2" width="14" height="12" rx="2" stroke="#fbbf24" stroke-width="1.5" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white text-sm mb-2">Get Deep Feedback</h3>
+        <p class="text-white text-xs leading-relaxed">Receive a scored evaluation across scalability, reliability, trade-offs, and communication quality.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════════════ -->
+<section id="features" class="layer bg-surface-900/95 border-t border-white/5 py-24">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="reveal mb-16">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="h-px w-6 bg-brand-500"></span>
+        <span class="tag">Features</span>
+      </div>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">Everything you need to nail it</h2>
+      <p class="text-white max-w-md">Built specifically for engineers who want to level up their system design skills, not just memorize patterns.</p>
+    </div>
+
+    <!-- Features grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- Big card: Whiteboard -->
+      <div class="reveal lg:row-span-2 glass shimmer-border rounded-2xl p-7 border border-brand-500/15 flex flex-col">
+        <div class="h-11 w-11 rounded-xl bg-brand-500/15 border border-brand-500/20 flex items-center justify-center mb-5">
+          <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+            <rect x="2" y="3" width="16" height="12" rx="2.5" stroke="#60a5fa" stroke-width="1.6"/>
+            <path d="M6 8l2 2 2-2 4 4" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 16h6" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M10 15v1.5" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white text-xl mb-3">Excalidraw Whiteboard</h3>
+        <p class="text-white text-sm leading-relaxed mb-6">
+          A full Excalidraw canvas embedded in your interview session. Draw boxes, arrows, labels —
+          whatever your architecture needs. The AI reads your diagram in real-time.
+        </p>
+        <!-- Fake whiteboard preview -->
+        <div class="flex-1 rounded-xl bg-surface-700/50 border border-white/5 p-4 overflow-hidden">
+          <div class="flex gap-2 mb-4">
+            <div class="h-2 w-2 rounded-full bg-red-400/60"></div>
+            <div class="h-2 w-2 rounded-full bg-yellow-400/60"></div>
+            <div class="h-2 w-2 rounded-full bg-green-400/60"></div>
+          </div>
+          <!-- Mock diagram -->
+          <svg width="100%" height="140" viewBox="0 0 260 140" fill="none">
+            <rect x="10" y="50" width="55" height="32" rx="5" stroke="#60a5fa" stroke-width="1.2" fill="#1e3a8a11"/>
+            <text x="37" y="70" text-anchor="middle" fill="#60a5fa" font-size="8" font-family="JetBrains Mono">Client</text>
+            <rect x="100" y="20" width="60" height="32" rx="5" stroke="#818cf8" stroke-width="1.2" fill="#312e8111"/>
+            <text x="130" y="40" text-anchor="middle" fill="#818cf8" font-size="8" font-family="JetBrains Mono">API GW</text>
+            <rect x="100" y="88" width="60" height="32" rx="5" stroke="#34d399" stroke-width="1.2" fill="#06473311"/>
+            <text x="130" y="108" text-anchor="middle" fill="#34d399" font-size="8" font-family="JetBrains Mono">Cache</text>
+            <rect x="190" y="50" width="60" height="32" rx="5" stroke="#fbbf24" stroke-width="1.2" fill="#45220011"/>
+            <text x="220" y="70" text-anchor="middle" fill="#fbbf24" font-size="8" font-family="JetBrains Mono">DB</text>
+            <!-- Arrows -->
+            <path d="M65 66 L100 36" stroke="#374151" stroke-width="1" stroke-dasharray="3,2"/>
+            <path d="M65 66 L100 104" stroke="#374151" stroke-width="1" stroke-dasharray="3,2"/>
+            <path d="M160 36 L190 60" stroke="#374151" stroke-width="1" stroke-dasharray="3,2"/>
+            <path d="M160 104 L190 72" stroke="#374151" stroke-width="1" stroke-dasharray="3,2"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Voice Interaction -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-brand-500/15 transition-colors" style="transition-delay:0.05s">
+        <div class="h-10 w-10 rounded-xl bg-red-500/12 border border-red-500/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <rect x="6" y="2" width="6" height="9" rx="3" stroke="#f87171" stroke-width="1.5"/>
+            <path d="M3 9c0 3.3 2.7 6 6 6s6-2.7 6-6" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9 15v2" stroke="#f87171" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Voice Interaction</h3>
+        <p class="text-white text-xs leading-relaxed">
+          Speak your design decisions just like a real interview. Whisper transcription captures
+          every word accurately, even technical terms.
+        </p>
+        <div class="mt-4 flex items-center gap-1">
+
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:6px;animation-delay:0ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:10px;animation-delay:80ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:5px;animation-delay:160ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:12px;animation-delay:240ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:7px;animation-delay:320ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:9px;animation-delay:400ms"></div>
+          <div class="flex-1 rounded-full bg-red-400/40 animate-pulse" style="height:11px;animation-delay:480ms"></div>
+        </div>
+      </div>
+
+      <!-- AI Evaluator -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-indigo-500/15 transition-colors" style="transition-delay:0.1s">
+        <div class="h-10 w-10 rounded-xl bg-indigo-500/12 border border-indigo-500/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M9 2c-1 0-2 .8-2.5 2L3 5.5C2 6 1.5 7 1.5 8s.5 2 1.5 2.5L6.5 12c.5 1.2 1.5 2 2.5 2s2-.8 2.5-2l3-1.5c1-.5 1.5-1.5 1.5-2.5s-.5-2-1.5-2.5L11.5 4C11 2.8 10 2 9 2z" stroke="#818cf8" stroke-width="1.4"/>
+            <circle cx="9" cy="9" r="2" stroke="#818cf8" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">GPT-4o Interviewer</h3>
+        <p class="text-white text-xs leading-relaxed">
+          Your AI interviewer asks follow-up questions, challenges your assumptions,
+          and keeps you on track — just like a real senior engineer would.
+        </p>
+        <div class="mt-4 space-y-2">
+          <div class="flex gap-2 items-start">
+            <div class="h-5 w-5 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-0.5">
+              <span class="text-[8px] text-indigo-400 font-bold">AI</span>
+            </div>
+            <p class="text-xs text-white bg-surface-700/50 rounded-lg px-2.5 py-1.5">"How would you handle database failover?"</p>
+          </div>
+          <div class="flex gap-2 items-start justify-end">
+            <p class="text-xs text-white bg-brand-500/12 rounded-lg px-2.5 py-1.5">"I'd use replica sets with auto-failover..."</p>
+            <div class="h-5 w-5 rounded-full bg-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+              <span class="text-[8px] text-white font-bold">U</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Feedback -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-green-500/15 transition-colors" style="transition-delay:0.15s">
+        <div class="h-10 w-10 rounded-xl bg-green-500/12 border border-green-500/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M4 9l3 3 7-7" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Scored Evaluation</h3>
+        <p class="text-white text-xs leading-relaxed mb-4">
+          Post-session rubric scoring across scalability, reliability, trade-offs, feasibility,
+          and communication quality.
+        </p>
+        <!-- Score bars -->
+        <div class="space-y-2">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-[10px] text-white">Scalability</span>
+              <span class="text-[10px] text-green-400 font-mono">87/100</span>
+            </div>
+            <div class="h-1 bg-surface-600 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full" style="width:87%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-[10px] text-white">Reliability</span>
+              <span class="text-[10px] text-brand-400 font-mono">74/100</span>
+            </div>
+            <div class="h-1 bg-surface-600 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-brand-600 to-brand-400 rounded-full" style="width:74%"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-[10px] text-white">Communication</span>
+              <span class="text-[10px] text-indigo-400 font-mono">91/100</span>
+            </div>
+            <div class="h-1 bg-surface-600 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-indigo-600 to-indigo-400 rounded-full" style="width:91%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drawing Analysis -->
+      <div class="reveal glass rounded-2xl p-6 border border-white/5 hover:border-teal-500/15 transition-colors" style="transition-delay:0.2s">
+        <div class="h-10 w-10 rounded-xl bg-teal-500/12 border border-teal-500/20 flex items-center justify-center mb-4">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <rect x="2" y="2" width="14" height="14" rx="2.5" stroke="#2dd4bf" stroke-width="1.5"/>
+            <circle cx="6.5" cy="6.5" r="1.5" stroke="#2dd4bf" stroke-width="1.2"/>
+            <path d="M16 12l-4-4-4 4-3-2" stroke="#2dd4bf" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-semibold text-white mb-2">Diagram Analysis</h3>
+        <p class="text-white text-xs leading-relaxed">
+          Submit your whiteboard to the AI and get immediate analysis of your architecture —
+          missing components, anti-patterns, and improvement suggestions.
+        </p>
+        <div class="mt-3 inline-flex items-center gap-1.5 text-xs text-teal-400 font-mono">
+          <span class="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse"></span>
+          Vision-enabled analysis
+        </div>
+      </div>
+
+      <!-- Learning Library — full-width card -->
+      <div class="reveal glass rounded-2xl p-6 border border-purple-500/15 hover:border-purple-500/25 transition-colors lg:col-span-3" style="transition-delay:0.25s">
+        <div class="flex flex-col sm:flex-row items-start gap-6">
+          <div class="h-11 w-11 rounded-xl bg-purple-500/12 border border-purple-500/20 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+              <rect x="2" y="3" width="10" height="14" rx="1.5" stroke="#c084fc" stroke-width="1.5"/>
+              <path d="M5 7h4M5 10h4M5 13h2.5" stroke="#c084fc" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M14 4v12" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+              <path d="M14 4c0 0 3 2 3 5.5S14 15 14 15" stroke="#c084fc" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-3 mb-3">
+              <h3 class="font-display font-semibold text-white text-lg">Learning Library</h3>
+              <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/25 font-mono">
+                <span class="h-1 w-1 rounded-full bg-green-400 animate-pulse"></span>
+                HLD Live
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-surface-600/80 text-white border border-white/10 font-mono">LLD Coming Soon</span>
+            </div>
+            <p class="text-white text-sm leading-relaxed mb-4 max-w-2xl">
+              ArchWise is more than a practice simulator — it's a complete system design learning hub.
+              Structured HLD concept articles are live now, covering distributed systems, databases, caching,
+              messaging, and more. LLD modules are launching soon. Learn the fundamentals, then put them
+              to the test in a live AI mock interview.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag">Distributed Systems</span>
+              <span class="tag">Database Design</span>
+              <span class="tag">Caching</span>
+              <span class="tag">Message Queues</span>
+              <span class="tag">API Design</span>
+              <span class="tag">Load Balancing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     PRICING
+══════════════════════════════════════════════════ -->
+<section id="pricing" class="layer bg-surface-900/90 border-t border-white/5 py-24" style="display:none">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="reveal text-center mb-14">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <span class="h-px w-6 bg-brand-500"></span>
+        <span class="tag">Pricing</span>
+        <span class="h-px w-6 bg-brand-500"></span>
+      </div>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">Simple, honest pricing</h2>
+      <p class="text-white max-w-sm mx-auto">Start free. Upgrade when you're ready to go deeper.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+
+      <!-- Starter -->
+      <div class="reveal glass rounded-2xl p-7 border border-white/6 flex flex-col">
+        <div class="mb-5">
+          <p class="tag inline-block mb-3">Starter</p>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-display font-bold text-white">$0</span>
+            <span class="text-white text-sm">/month</span>
+          </div>
+          <p class="text-white text-xs mt-1">Free forever — no card needed</p>
+        </div>
+        <ul class="space-y-3 mb-7 flex-1">
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            3 sessions per month
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Basic AI feedback
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Excalidraw whiteboard
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white opacity-50">
+            <svg width="14" height="14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Voice interaction
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white opacity-50">
+            <svg width="14" height="14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Diagram analysis
+          </li>
+        </ul>
+        <a href="#contact" class="w-full py-2.5 rounded-xl border border-white/10 text-white hover:border-white/20 hover:text-white text-sm font-medium transition-colors text-center">
+          Get Started
+        </a>
+      </div>
+
+      <!-- Pro (highlighted) -->
+      <div class="reveal pricing-popular rounded-2xl p-7 border flex flex-col shadow-2xl shadow-brand-900/30 scale-[1.02]" style="transition-delay:0.1s">
+        <div class="mb-5">
+          <div class="flex items-center gap-2 mb-3">
+            <p class="tag">Pro</p>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-500 text-white font-mono font-medium">Most Popular</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-display font-bold text-white">$19</span>
+            <span class="text-white text-sm">/month</span>
+          </div>
+          <p class="text-white text-xs mt-1">Billed monthly, cancel anytime</p>
+        </div>
+        <ul class="space-y-3 mb-7 flex-1">
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Unlimited sessions
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            GPT-4o AI interviewer
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Voice interaction
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Diagram vision analysis
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Detailed rubric scoring
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#60a5fa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Session history &amp; replay
+          </li>
+        </ul>
+        <a href="#contact" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-colors text-center animation-glow-pulse">
+          Start Pro Trial
+        </a>
+      </div>
+
+      <!-- Team -->
+      <!-- <div class="reveal glass rounded-2xl p-7 border border-white/6 flex flex-col" style="transition-delay:0.2s">
+        <div class="mb-5">
+          <p class="tag inline-block mb-3">Team</p>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-display font-bold text-white">$49</span>
+            <span class="text-white text-sm">/seat/mo</span>
+          </div>
+          <p class="text-white text-xs mt-1">5 seat minimum</p>
+        </div>
+        <ul class="space-y-3 mb-7 flex-1">
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Everything in Pro
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Admin dashboard
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Team analytics &amp; reports
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Custom question bank
+          </li>
+          <li class="flex items-center gap-2.5 text-sm text-white">
+            <svg width="14" height="14" fill="none"><path d="M2.5 7.5l3 3 6-6" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Priority support &amp; SLA
+          </li>
+        </ul>
+        <a href="#contact" class="w-full py-2.5 rounded-xl border border-white/10 text-white hover:border-white/20 hover:text-white text-sm font-medium transition-colors text-center">
+          Contact Sales
+        </a>
+      </div> -->
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════════════ -->
+<section id="testimonials" class="layer dot-bg bg-surface-900/80 border-t border-white/5 py-24" style="display:none">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="reveal text-center mb-14">
+      <div class="inline-flex items-center gap-2 mb-4">
+        <span class="h-px w-6 bg-brand-500"></span>
+        <span class="tag">Testimonials</span>
+        <span class="h-px w-6 bg-brand-500"></span>
+      </div>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">Engineers who made it</h2>
+      <p class="text-white">Real feedback from people who cracked system design at top companies.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      <div class="reveal testimonial-card rounded-2xl p-7">
+        <div class="flex gap-1 mb-4">
+          <span class="text-amber-400 text-sm">★★★★★</span>
+        </div>
+        <blockquote class="text-white text-sm leading-relaxed mb-5">
+          "I'd failed the Meta system design round twice before. After 3 weeks with ArchWise,
+          I finally understood <em>why</em> my answers were weak — I was describing components,
+          not decisions. Passed the third time. Just joined as Staff Engineer."
+        </blockquote>
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">P</div>
+          <div>
+            <p class="text-white text-sm font-medium">Priya K.</p>
+            <p class="text-white text-xs">Staff Engineer, Meta</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal testimonial-card rounded-2xl p-7" style="transition-delay:0.1s">
+        <div class="flex gap-1 mb-4">
+          <span class="text-amber-400 text-sm">★★★★★</span>
+        </div>
+        <blockquote class="text-white text-sm leading-relaxed mb-5">
+          "The voice interaction feature changed everything. I'd practiced on paper for years
+          but never had to explain my choices out loud. The AI follows up with exactly the
+          questions a real interviewer would — 'What happens when the cache misses at scale?'"
+        </blockquote>
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-gradient-to-br from-green-600 to-teal-600 flex items-center justify-center text-white font-bold text-sm">M</div>
+          <div>
+            <p class="text-white text-sm font-medium">Marcus T.</p>
+            <p class="text-white text-xs">Senior SWE, Google</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal testimonial-card rounded-2xl p-7" style="transition-delay:0.2s">
+        <div class="flex gap-1 mb-4">
+          <span class="text-amber-400 text-sm">★★★★★</span>
+        </div>
+        <blockquote class="text-white text-sm leading-relaxed mb-5">
+          "The diagram analysis is wild. I drew a rough architecture for a ride-sharing service
+          and within seconds got feedback noting I hadn't accounted for the driver location
+          update frequency at scale. That's the kind of detail I'd been missing."
+        </blockquote>
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-gradient-to-br from-amber-600 to-orange-600 flex items-center justify-center text-white font-bold text-sm">A</div>
+          <div>
+            <p class="text-white text-sm font-medium">Aisha L.</p>
+            <p class="text-white text-xs">Principal Engineer, Stripe</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal testimonial-card rounded-2xl p-7" style="transition-delay:0.3s">
+        <div class="flex gap-1 mb-4">
+          <span class="text-amber-400 text-sm">★★★★★</span>
+        </div>
+        <blockquote class="text-white text-sm leading-relaxed mb-5">
+          "I used ArchWise for 4 weeks before my Amazon loop. The scoring system helped
+          me benchmark exactly where I was weak — trade-off analysis and failure modes.
+          Focused my last week on those. Cleared L6. Absolutely worth it."
+        </blockquote>
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-sm">D</div>
+          <div>
+            <p class="text-white text-sm font-medium">David C.</p>
+            <p class="text-white text-xs">L6 SDE, Amazon</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════════════ -->
+<section id="about" class="layer bg-surface-900/95 border-t border-white/5 py-24">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Text -->
+      <div>
+        <div class="reveal flex items-center gap-2 mb-4">
+          <span class="h-px w-6 bg-brand-500"></span>
+          <span class="tag">About ArchWise</span>
+        </div>
+        <h2 class="reveal font-display font-bold text-3xl sm:text-4xl text-white leading-tight mb-6">
+          Built by engineers<br/>
+          <span class="gradient-text">who felt the gap</span>
+        </h2>
+        <div class="reveal space-y-4 text-white text-sm leading-relaxed">
+          <p>
+            We spent years preparing for system design interviews at top companies.
+            We read all the books. We watched all the videos. We could name every component.
+            And we still bombed the first few rounds.
+          </p>
+          <p>
+            The gap wasn't knowledge — it was <strong class="text-white">practice under pressure</strong>.
+            The ability to think through a real problem live, handle follow-up questions,
+            and articulate trade-offs while drawing on a whiteboard.
+          </p>
+          <p>
+            ArchWise was built to close that gap. Not with more content — but with
+            <strong class="text-white">deliberate practice</strong> in a setting that mimics
+            the real thing as closely as possible.
+          </p>
+        </div>
+
+        <!-- The quote -->
+        <div class="reveal mt-8 border-l-2 border-brand-500/40 pl-5">
+          <blockquote class="text-white italic text-base leading-relaxed mb-2">
+            "AI will write most of the code within five years.
+            The engineers who thrive will be those who design the systems AI runs inside."
+          </blockquote>
+          <cite class="text-white text-xs not-italic">— Why we built this</cite>
+        </div>
+      </div>
+
+      <!-- Orbital graphic -->
+      <div class="reveal flex items-center justify-center">
+        <div class="relative w-64 h-64 sm:w-80 sm:h-80">
+          <!-- Center -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-brand-900/60 animate-float">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                <path d="M4 21L14 5L24 21" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 15h12" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Rings -->
+          <div class="orbit-ring absolute" style="inset:20px"></div>
+          <div class="orbit-ring absolute" style="inset:5px"></div>
+          <div class="orbit-ring absolute" style="inset:45px;border-color:rgba(99,102,241,0.15)"></div>
+          <!-- Orbital dots -->
+          <div class="absolute h-2.5 w-2.5 rounded-full bg-brand-400 shadow-lg shadow-brand-500/50" style="top:12px;left:50%;margin-left:-5px"></div>
+          <div class="absolute h-2 w-2 rounded-full bg-indigo-400 shadow-lg shadow-indigo-500/50" style="bottom:15px;right:18px"></div>
+          <div class="absolute h-2 w-2 rounded-full bg-green-400 shadow-lg shadow-green-500/50" style="bottom:20px;left:20px"></div>
+          <div class="absolute h-1.5 w-1.5 rounded-full bg-amber-400 shadow-lg shadow-amber-500/50" style="top:30px;right:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     CONTACT
+══════════════════════════════════════════════════ -->
+<section id="contact" class="layer dot-bg bg-surface-900/80 border-t border-white/5 py-24">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+      <!-- Left: info -->
+      <div>
+        <div class="reveal flex items-center gap-2 mb-4">
+          <span class="h-px w-6 bg-brand-500"></span>
+          <span class="tag">Contact</span>
+        </div>
+        <h2 class="reveal font-display font-bold text-3xl sm:text-4xl text-white mb-5">
+          Get in touch
+        </h2>
+        <p class="reveal text-white text-sm leading-relaxed mb-8 max-w-sm">
+          Questions about pricing, enterprise plans, partnerships, or just want to say hi?
+          We reply to every message.
+        </p>
+
+        <div class="reveal space-y-4">
+          <a href="mailto:archwise.work@gmail.com" class="flex items-center gap-3 text-sm text-white hover:text-white transition-colors group">
+            <div class="h-9 w-9 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center group-hover:border-brand-500/30 transition-colors">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="1" y="3" width="12" height="9" rx="1.5"/>
+                <path d="M1 5l6 4 6-4"/>
+              </svg>
+            </div>
+            archwise.work@gmail.com
+          </a>
+          <a href="tel:+910000000000" class="flex items-center gap-3 text-sm text-white hover:text-white transition-colors group">
+            <div class="h-9 w-9 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center group-hover:border-brand-500/30 transition-colors">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.63 19.79 19.79 0 01.01 2a2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.72-.36a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+              </svg>
+            </div>
+            +91 9027451440
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="reveal">
+        <form id="contact-form" class="glass rounded-2xl p-7 border border-white/6 space-y-5">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="relative">
+              <input type="text" id="name" placeholder=" " autocomplete="name"
+                class="w-full bg-surface-700/50 border border-white/8 rounded-xl px-3.5 pt-5 pb-2.5 text-white text-sm focus:outline-none focus:border-brand-500/60 transition-colors placeholder-transparent peer" />
+              <label for="name" class="absolute left-3.5 top-3.5 text-white text-xs transition-all peer-focus:-translate-y-2 peer-focus:scale-90 peer-focus:text-brand-400 peer-[&:not(:placeholder-shown)]:-translate-y-2 peer-[&:not(:placeholder-shown)]:scale-90">
+                Full Name
+              </label>
+            </div>
+            <div class="relative">
+              <input type="email" id="email" placeholder=" " autocomplete="email"
+                class="w-full bg-surface-700/50 border border-white/8 rounded-xl px-3.5 pt-5 pb-2.5 text-white text-sm focus:outline-none focus:border-brand-500/60 transition-colors placeholder-transparent peer" />
+              <label for="email" class="absolute left-3.5 top-3.5 text-white text-xs transition-all peer-focus:-translate-y-2 peer-focus:scale-90 peer-focus:text-brand-400 peer-[&:not(:placeholder-shown)]:-translate-y-2 peer-[&:not(:placeholder-shown)]:scale-90">
+                Email Address
+              </label>
+            </div>
+          </div>
+
+          <div class="relative">
+            <select id="subject"
+              class="w-full border border-white/8 rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-brand-500/60 transition-colors appearance-none"
+              style="background-color:#0b1120">
+              <option value="" style="background:#0b1120;color:#fff">Topic...</option>
+              <option value="pricing" style="background:#0b1120;color:#fff">Pricing question</option>
+              <option value="enterprise" style="background:#0b1120;color:#fff">Enterprise / Team plan</option>
+              <option value="bug" style="background:#0b1120;color:#fff">Report a bug</option>
+              <option value="feature" style="background:#0b1120;color:#fff">Feature request</option>
+              <option value="other" style="background:#0b1120;color:#fff">Other</option>
+            </select>
+            <svg class="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-white" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+
+          <div class="relative">
+            <textarea id="message" rows="4" placeholder=" "
+              class="w-full bg-surface-700/50 border border-white/8 rounded-xl px-3.5 pt-5 pb-2.5 text-white text-sm focus:outline-none focus:border-brand-500/60 transition-colors resize-none placeholder-transparent peer"></textarea>
+            <label for="message" class="absolute left-3.5 top-3.5 text-white text-xs transition-all peer-focus:-translate-y-2 peer-focus:scale-90 peer-focus:text-brand-400 peer-[&:not(:placeholder-shown)]:-translate-y-2 peer-[&:not(:placeholder-shown)]:scale-90">
+              Your Message
+            </label>
+          </div>
+
+          <button type="submit" id="form-submit" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand-900/50">
+            Send Message
+          </button>
+          <p id="form-success" class="hidden text-center text-green-400 text-sm">✓ Message sent! We'll be in touch soon.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="layer bg-surface-900 border-t border-white/5 py-10">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="h-6 w-6 rounded-md bg-brand-600 flex items-center justify-center">
+            <svg width="10" height="10" viewBox="0 0 14 14" fill="none">
+              <path d="M2 11L7 3L12 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 8h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="font-display font-bold text-white text-sm">ArchWise</span>
+        </div>
+        <p class="text-white text-xs leading-relaxed max-w-[180px]">AI-powered system design interview simulator for engineers who want to think architecturally.</p>
+      </div>
+
+      <div>
+        <h4 class="text-white text-xs font-semibold mb-3 uppercase tracking-widest">Product</h4>
+        <ul class="space-y-2">
+          <li><a href="#features" class="text-white hover:text-brand-400 text-xs transition-colors">Features</a></li>
+          <!-- <li><a href="#pricing" class="text-white hover:text-brand-400 text-xs transition-colors">Pricing</a></li> -->
+          <li><a href="#how-it-works" class="text-white hover:text-brand-400 text-xs transition-colors">How It Works</a></li>
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Changelog</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white text-xs font-semibold mb-3 uppercase tracking-widest">Company</h4>
+        <ul class="space-y-2">
+          <li><a href="#about" class="text-white hover:text-brand-400 text-xs transition-colors">About</a></li>
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Blog</a></li>
+          <li><a href="#contact" class="text-white hover:text-brand-400 text-xs transition-colors">Contact</a></li>
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Careers</a></li>
+        </ul>
+      </div>
+
+      <!-- <div>
+        <h4 class="text-white text-xs font-semibold mb-3 uppercase tracking-widest">Legal</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Terms of Service</a></li>
+          <li><a href="#" class="text-white hover:text-brand-400 text-xs transition-colors">Cookie Policy</a></li>
+        </ul>
+      </div> -->
+    </div>
+
+    <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-white text-xs">© 2026 ArchWise. Built for engineers who think in systems.</p>
+      <div class="flex items-center gap-1">
+        <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
+        <span class="text-white text-xs">All systems operational</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

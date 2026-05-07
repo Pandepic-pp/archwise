@@ -687,34 +687,63 @@
     /* ========================================
        RESPONSIVE
     ======================================== */
+
+    /* === Tablet (≤900px) === */
     @media (max-width: 900px) {
       :root { --gap: 80px; }
-      .nav-links    { display: none; }
-      .nav-menu-btn { display: block; }
-      .why-pillars  { grid-template-columns: 1fr; }
-      .stats-band   { grid-template-columns: 1fr; }
-      .steps-grid   { grid-template-columns: 1fr 1fr; }
-      .steps-grid::after { display: none; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .feature-large { grid-row: span 1; }
-      .feature-full  { grid-column: span 2; }
-      .about-grid    { grid-template-columns: 1fr; gap: 40px; }
-      .contact-grid  { grid-template-columns: 1fr; gap: 40px; }
-      .footer-grid   { grid-template-columns: 1fr 1fr; }
+      .nav-links               { display: none; }
+      .nav-menu-btn            { display: block; }
+      .nav-actions .btn-ghost  { display: none; }   /* Contact link lives in mobile menu */
+      #hero                    { padding: 100px 0 60px; }
+      .section-header          { margin-bottom: 48px; }
+      .why-pillars             { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid              { grid-template-columns: 1fr 1fr; }
+      .steps-grid::after       { display: none; }
+      .features-grid           { grid-template-columns: 1fr 1fr; }
+      .feature-large           { grid-row: span 1; }
+      .feature-full            { grid-column: span 2; }
+      .about-grid              { grid-template-columns: 1fr; gap: 40px; }
+      .contact-grid            { grid-template-columns: 1fr; gap: 40px; }
+      .footer-grid             { grid-template-columns: 1fr 1fr; }
       .footer-grid > .footer-col:first-child { grid-column: span 2; }
     }
+
+    /* === Mobile (≤580px) === */
     @media (max-width: 580px) {
-      .steps-grid    { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr; }
-      .feature-full  { grid-column: span 1; }
-      .about-cards   { grid-template-columns: 1fr; }
-      .about-card-span { grid-column: span 1; }
-      .footer-grid   { grid-template-columns: 1fr; }
+      :root { --gap: 64px; }
+      .container               { padding: 0 16px; }
+      #hero                    { padding: 88px 0 48px; }
+      .section-header          { margin-bottom: 32px; }
+      .section-header p        { font-size: 15px; }
+      .hero-ctas               { flex-direction: column; align-items: center; }
+      .hero-ctas .btn          { width: 100%; max-width: 320px; justify-content: center; }
+      .hero-stats              { flex-direction: column; gap: 16px; }
+      .hero-stat               { padding: 0 20px; }
+      .stat-sep                { width: 48px; height: 1px; }
+      .why-pillars             { grid-template-columns: 1fr; }
+      .stats-band              { grid-template-columns: 1fr; }
+      .steps-grid              { grid-template-columns: 1fr; }
+      .features-grid           { grid-template-columns: 1fr; }
+      .feature-full            { grid-column: span 1; }
+      .about-cards             { grid-template-columns: 1fr; }
+      .about-card-span         { grid-column: span 1; }
+      .form-row                { grid-template-columns: 1fr; }
+      .footer-grid             { grid-template-columns: 1fr; }
       .footer-grid > .footer-col:first-child { grid-column: span 1; }
-      .hero-stats    { flex-direction: column; gap: 16px; }
-      .stat-sep      { width: 40px; height: 1px; }
-      .form-row      { grid-template-columns: 1fr; }
-      .hero-ctas     { flex-direction: column; align-items: center; }
+    }
+
+    /* === Small phones (≤420px) === */
+    @media (max-width: 420px) {
+      :root { --gap: 56px; }
+      .nav-inner               { padding: 13px 16px; }
+      #hero h1                 { font-size: 36px; }
+      .hero-eyebrow            { font-size: 11px; padding: 5px 12px; }
+      .hero-sub                { font-size: 15px; }
+      .card                    { padding: 20px; }
+      .stat-item               { padding: 24px 16px; }
+      .stat-item-val           { font-size: 24px; }
+      .about-card-val          { font-size: 28px; }
+      .footer-brand-desc       { max-width: 100%; }
     }
   </style>
 </head>

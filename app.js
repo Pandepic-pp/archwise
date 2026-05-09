@@ -40,14 +40,35 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 const form    = document.getElementById('contact-form');
 const success = document.getElementById('form-success');
 
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
   const btn = form.querySelector('button[type="submit"]');
+  const original = btn.textContent;
   btn.textContent = 'Sending...';
   btn.disabled = true;
-  setTimeout(() => {
+
+  const data = {
+    name:    form.querySelector('#name').value.trim(),
+    email:   form.querySelector('#email').value.trim(),
+    subject: form.querySelector('#topic').value || 'General inquiry',
+    message: form.querySelector('#message').value.trim(),
+  };
+
+  try {
+    const res = await fetch('https://app.archwyse.com/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error('Server error');
+
     form.reset();
     btn.style.display = 'none';
     success.style.display = 'flex';
-  }, 800);
+  } catch {
+    btn.textContent = original;
+    btn.disabled = false;
+    alert('Failed to send message. Please try again or email us directly at support@archwyse.com');
+  }
 });

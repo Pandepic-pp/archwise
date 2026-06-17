@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="./favicon.png" type="image/png" />
+  <title>ArchWyse — AI-Powered System Design Interview Simulator</title>
+  <meta name="description" content="Practice system design interviews with an AI interviewer. Draw on the whiteboard, use voice interaction, and get real-time architectural feedback." />
+  <meta name="keywords" content="system design mock interview, AI system design interview practice, mock HLD interview, practice system design interviews, AI mock interview simulator" />
+  <meta name="author" content="ArchWyse" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://archwyse.com/engineers" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://archwyse.com/engineers" />
+  <meta property="og:title" content="ArchWyse — AI-Powered System Design Interview Simulator" />
+  <meta property="og:description" content="Practice system design interviews with an AI interviewer. Draw on the whiteboard, use voice interaction, and get real-time architectural feedback." />
+  <meta property="og:image" content="https://archwyse.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="ArchWyse" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ArchWyse — AI-Powered System Design Interview Simulator" />
+  <meta name="twitter:description" content="Practice system design interviews with an AI interviewer." />
+  <meta name="twitter:image" content="https://archwyse.com/og-image.png" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"ArchWyse","url":"https://archwyse.com/engineers","description":"AI-powered system design mock interview simulator.","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --bg:        #F7F4EF;
+      --surface:   #FFFFFF;
+      --surface-2: #F0EDE6;
+      --border:    rgba(74,78,74,0.12);
+      --border-h:  rgba(74,124,89,0.38);
+      --text:      #1A1A1A;
+      --muted:     #6B6358;
+      --dim:       #9A9490;
+      --primary:   #4A7C59;
+      --primary-dk:#3a6347;
+      --primary-bg:rgba(74,124,89,0.08);
+      --amber:     #C4A66A;
+      --amber-bg:  rgba(196,166,106,0.1);
+      --neutral:   #4A4E4A;
+      --r:         12px;
+      --r-sm:      8px;
+      --max-w:     1120px;
+      --gap:       96px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+
+    .container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+    h1,h2,h3,h4{font-family:'Sora',system-ui,sans-serif}
+
+    .label{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:14px}
+    .label-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0}
+
+    .gradient-text{background:linear-gradient(135deg,#4A7C59 0%,#C4A66A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    .section-header{text-align:center;margin-bottom:56px}
+    .section-header h2{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1.12;margin-bottom:14px}
+    .section-header p{font-size:17px;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.7}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r-sm);font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s ease;border:none;font-family:'Inter',sans-serif;line-height:1;white-space:nowrap}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dk);transform:translateY(-1px);box-shadow:0 8px 28px rgba(74,124,89,.28)}
+    .btn-ghost{background:transparent;color:var(--neutral);border:1.5px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--border-h);color:var(--primary);background:var(--primary-bg)}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;transition:border-color .2s,box-shadow .2s}
+    .card:hover{border-color:var(--border-h);box-shadow:0 6px 28px rgba(74,124,89,.08)}
+    .icon-box{width:40px;height:40px;border-radius:var(--r-sm);background:var(--primary-bg);border:1px solid rgba(74,124,89,.2);display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
+
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-d1{transition-delay:.1s}
+    .reveal-d2{transition-delay:.2s}
+    .reveal-d3{transition-delay:.3s}
+    .reveal-d4{transition-delay:.4s}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent}
+    nav.scrolled{background:rgba(247,244,239,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--border);box-shadow:0 1px 20px rgba(74,78,74,.07)}
+    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+    .nav-logo-icon{width:30px;height:30px;background:var(--primary);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white}
+    .nav-badge{font-size:10px;font-weight:600;background:var(--amber-bg);color:#8B6914;border:1px solid rgba(196,166,106,.35);padding:2px 8px;border-radius:20px;letter-spacing:.05em}
+    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+    .nav-links a{font-size:14px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+    .nav-menu-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;line-height:0}
+    .mobile-menu{display:none;position:fixed;inset:0;top:65px;background:rgba(247,244,239,.97);backdrop-filter:blur(16px);z-index:99;padding:32px 24px;flex-direction:column;gap:4px;border-top:1px solid var(--border)}
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);transition:color .2s}
+    .mobile-menu a:hover{color:var(--text)}
+    .mobile-menu .btn{margin-top:20px;justify-content:center}
+
+    #hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden}
+    .hero-bg-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(74,78,74,.13) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none;opacity:.5}
+    .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:1;max-width:1320px;margin:0 auto;width:100%}
+    .hero-text{animation:fadeUp .7s ease both}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--primary-bg);border:1px solid rgba(74,124,89,.22);border-radius:20px;font-size:13px;font-weight:500;color:var(--primary);margin-bottom:26px}
+    .eyebrow-dot{width:6px;height:6px;background:var(--primary);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+    .hero-text h1{font-family:'Sora',sans-serif;font-size:clamp(38px,5.2vw,66px);font-weight:800;letter-spacing:-.04em;line-height:1.06;margin-bottom:22px}
+    .hero-sub{font-size:17px;color:var(--muted);line-height:1.75;margin-bottom:34px;max-width:480px}
+    .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+    .hero-stats{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .hero-stat{display:flex;flex-direction:column;gap:2px}
+    .hero-stat strong{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:var(--text)}
+    .hero-stat span{font-size:12px;color:var(--dim)}
+    .hero-stat-sep{width:1px;height:30px;background:var(--border)}
+    .hero-diagram{animation:fadeUp .7s ease .15s both}
+    .hero-diagram svg{width:100%;height:auto;border-radius:20px;box-shadow:0 20px 60px rgba(74,78,74,.13),0 4px 16px rgba(74,78,74,.07)}
+
+    #trust{padding:28px 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .trust-inner{display:flex;align-items:center;gap:28px;flex-wrap:wrap;justify-content:center}
+    .trust-label{font-size:13px;color:var(--dim);white-space:nowrap}
+    .trust-logos{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+    .trust-logos span{font-size:14px;font-weight:600;color:var(--dim);letter-spacing:-.01em}
+
+    #why{padding:var(--gap) 0}
+    .why-quote{font-family:'Sora',sans-serif;font-size:clamp(21px,2.8vw,31px);font-weight:700;text-align:center;max-width:640px;margin:0 auto 18px;line-height:1.28;letter-spacing:-.025em}
+    .why-body{font-size:17px;color:var(--muted);text-align:center;max-width:580px;margin:0 auto 48px;line-height:1.75}
+    .why-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .why-pillars .card{padding:24px}
+    .why-pillars h3{font-size:16px;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+    .why-pillars p{font-size:14px;color:var(--muted);line-height:1.7}
+    .stats-band{display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+    .stat-item{background:var(--surface);padding:32px 24px;text-align:center;border-right:1px solid var(--border)}
+    .stat-item:last-child{border-right:none}
+    .stat-item-val{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:var(--primary);margin-bottom:8px;letter-spacing:-.03em}
+    .stat-item-label{font-size:13px;color:var(--muted);line-height:1.5}
+
+    #how-it-works{padding:var(--gap) 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .steps-wrap{position:relative}
+    .steps-line{position:absolute;top:22px;left:calc(12.5% + 8px);right:calc(12.5% + 8px);height:1px;background:linear-gradient(90deg,transparent,var(--border-h),var(--border-h),transparent)}
+    .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative}
+    .step-num{width:44px;height:44px;border-radius:50%;background:var(--bg);border:1.5px solid rgba(74,124,89,.35);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--primary);margin-bottom:18px;position:relative;z-index:1}
+    .step h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+    .step p{font-size:14px;color:var(--muted);line-height:1.65}
+
+    #features{padding:var(--gap) 0}
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .feature-large{grid-row:span 2}
+    .feature-full{grid-column:span 3}
+    .card.feature h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+    .card.feature p{font-size:14px;color:var(--muted);line-height:1.65}
+    .arch-preview{margin-top:18px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:16px;font-size:12px;font-family:'Courier New',monospace;line-height:2.1}
+    .score-bars{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+    .score-row{display:flex;flex-direction:column;gap:4px}
+    .score-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+    .score-val{color:var(--primary);font-weight:600}
+    .score-track{height:4px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+    .score-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--primary),var(--amber))}
+    .feature-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .feature-tag{font-size:12px;padding:4px 12px;background:var(--bg);border:1px solid var(--border);border-radius:20px;color:var(--muted)}
+    .feature-tag.hi{background:var(--primary-bg);border-color:rgba(74,124,89,.25);color:var(--primary)}
+
+    #companies{padding:60px 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .companies-teaser{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+    .companies-teaser h2{font-size:clamp(22px,3vw,34px);font-weight:700;letter-spacing:-.03em;margin-bottom:10px;line-height:1.2}
+    .companies-teaser p{font-size:15px;color:var(--muted);max-width:560px;line-height:1.75}
+
+    #about{padding:var(--gap) 0}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+    .about-text h2{font-size:clamp(28px,3.5vw,40px);font-weight:700;letter-spacing:-.03em;margin-bottom:22px;line-height:1.15}
+    .about-text p{font-size:15px;color:var(--muted);margin-bottom:16px;line-height:1.8}
+    .about-quote{border-left:3px solid var(--primary);padding:16px 20px;background:var(--primary-bg);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-top:28px}
+    .about-quote p{font-size:15px;font-style:italic;color:var(--text);margin-bottom:8px}
+    .about-quote cite{font-size:13px;color:var(--dim);font-style:normal}
+    .about-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .about-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:border-color .2s}
+    .about-card:hover{border-color:var(--border-h)}
+    .about-card-span{grid-column:span 2}
+    .about-card-val{font-family:'Sora',sans-serif;font-size:36px;font-weight:800;color:var(--primary);letter-spacing:-.03em}
+    .about-card-label{font-size:13px;color:var(--dim);margin-top:6px}
+
+    #contact{padding:var(--gap) 0;background:var(--surface);border-top:1px solid var(--border)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:80px;align-items:start}
+    .contact-info h2{font-size:clamp(26px,3vw,36px);font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+    .contact-info>p{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+    .contact-methods{display:flex;flex-direction:column;gap:12px}
+    .contact-method{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--muted);font-size:15px;transition:color .2s}
+    .contact-method:hover{color:var(--primary)}
+    .method-icon{width:38px;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;transition:border-color .2s}
+    .contact-method:hover .method-icon{border-color:rgba(74,124,89,.3)}
+    .contact-form{display:flex;flex-direction:column;gap:14px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{display:flex;flex-direction:column;gap:6px}
+    .form-group label{font-size:13px;font-weight:500;color:var(--muted)}
+    .form-group input,.form-group select,.form-group textarea{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 14px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;width:100%}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
+    .form-group select{appearance:none;cursor:pointer}
+    .form-group textarea{resize:vertical}
+    .form-success{display:none;align-items:center;gap:10px;padding:13px 16px;background:var(--primary-bg);border:1px solid rgba(74,124,89,.25);border-radius:var(--r-sm);color:var(--primary);font-size:14px;font-weight:500}
+
+    footer{background:var(--neutral);color:rgba(255,255,255,.8);padding:56px 0 28px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-logo{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:white;text-decoration:none;margin-bottom:12px}
+    .footer-logo-icon{width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+    .footer-desc{font-size:14px;color:rgba(255,255,255,.4);line-height:1.65;max-width:240px}
+    .footer-col h4{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);margin-bottom:14px;letter-spacing:.1em;text-transform:uppercase}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .footer-col a{font-size:14px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}
+    .footer-col a:hover{color:white}
+    .footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .footer-bottom p{font-size:13px;color:rgba(255,255,255,.3)}
+    .footer-status{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--amber)}
+    .status-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+
+    @media(max-width:960px){
+      :root{--gap:72px}
+      .nav-links{display:none}
+      .nav-menu-btn{display:block}
+      .nav-actions .btn-ghost{display:none}
+      .hero-inner{grid-template-columns:1fr;gap:40px}
+      .hero-diagram{max-width:480px;margin:0 auto}
+      .why-pillars{grid-template-columns:1fr 1fr}
+      .steps-grid{grid-template-columns:1fr 1fr}
+      .steps-line{display:none}
+      .features-grid{grid-template-columns:1fr 1fr}
+      .feature-large{grid-row:span 1}
+      .feature-full{grid-column:span 2}
+      .companies-teaser{grid-template-columns:1fr;gap:24px}
+      .about-grid,.contact-grid{grid-template-columns:1fr;gap:44px}
+      .footer-grid{grid-template-columns:1fr 1fr}
+      .footer-grid>div:first-child{grid-column:span 2}
+    }
+    @media(max-width:580px){
+      :root{--gap:56px}
+      .container{padding:0 16px}
+      #hero{padding:88px 0 48px}
+      .hero-ctas{flex-direction:column;align-items:stretch}
+      .hero-ctas .btn{justify-content:center}
+      .hero-stats{flex-direction:column;gap:12px}
+      .hero-stat-sep{width:40px;height:1px}
+      .why-pillars,.steps-grid{grid-template-columns:1fr}
+      .stats-band{grid-template-columns:1fr}
+      .stat-item{border-right:none;border-bottom:1px solid var(--border)}
+      .stat-item:last-child{border-bottom:none}
+      .features-grid{grid-template-columns:1fr}
+      .feature-full{grid-column:span 1}
+      .about-cards{grid-template-columns:1fr}
+      .about-card-span{grid-column:span 1}
+      .form-row{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}
+      .footer-grid>div:first-child{grid-column:span 1}
+    }
+    @media(max-width:420px){
+      .nav-inner{padding:13px 16px}
+      .hero-text h1{font-size:34px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="favicon.png" alt="" style="width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;">
+      ArchWyse
+    </a>
+    <ul class="nav-links">
+      <li><a href="#why">Why</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="index.html">For Organizations</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#contact" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">Contact</a>
+      <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:8px 18px;font-size:14px;">Start free →</a>
+      <button class="nav-menu-btn" id="menu-toggle" aria-label="Toggle menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu" role="navigation">
+  <a href="#why" class="mob-link">Why ArchWyse</a>
+  <a href="#features" class="mob-link">Features</a>
+  <a href="#how-it-works" class="mob-link">How It Works</a>
+  <a href="index.html" class="mob-link">For Organizations</a>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#contact" class="mob-link">Contact</a>
+  <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Start free →</a>
+</div>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-dots" aria-hidden="true"></div>
+  <div class="container" style="max-width:1400px;padding:0 32px;">
+    <div class="hero-inner">
+
+      <div class="hero-text">
+<h1>Practice System Design.<br><span class="gradient-text">Not Just Study It.</span></h1>
+        <p class="hero-sub">ArchWyse puts you inside a realistic mock interview — AI interviewer, voice interaction, and an interactive whiteboard. Speak your architecture decisions, defend them under follow-up questioning, and build the skill you actually need.</p>
+        <div class="hero-ctas">
+          <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Start for free →</a>
+          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><strong>50+</strong><span>Interview problems</span></div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat"><strong>GPT-4o</strong><span>AI interviewer</span></div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat"><strong>Free</strong><span>To get started</span></div>
+        </div>
+      </div>
+
+      <div class="hero-diagram">
+        <img
+          src="hero-image-candidates.png"
+          alt="ArchWyse mock interview — AI interviewer asks follow-up questions as you build your system design on the whiteboard"
+          style="width:calc(100% + 60px);border-radius:16px;box-shadow:0 24px 64px rgba(74,78,74,.14);display:block;"
+        />
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section id="trust">
+  <div class="container">
+    <div class="trust-inner">
+      <span class="trust-label">Engineers preparing at companies like</span>
+      <div class="trust-logos">
+        <span>Google</span>
+        <span>Amazon</span>
+        <span>Microsoft</span>
+        <span>Meta</span>
+        <span>Flipkart</span>
+        <span>Razorpay</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="label"><span class="label-dot"></span>The Philosophy</div>
+      <blockquote class="why-quote">"AI can already write code. But it can't yet design systems that scale."</blockquote>
+      <p class="why-body">That's your competitive edge in every senior interview. But you don't build architectural thinking by reading about it — you build it by defending decisions live, under pressure. That's what ArchWyse simulates.</p>
+    </div>
+    <div class="why-pillars">
+      <div class="card reveal reveal-d1">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <h3>Technical Depth</h3>
+        <p>Go beyond surface-level answers. Practice defending component choices — when to use a cache, which database fits, how to handle queue backpressure — to an AI that asks <em>why</em> until your reasoning holds up.</p>
+      </div>
+      <div class="card reveal reveal-d2">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        </div>
+        <h3>Systems Thinking</h3>
+        <p>Articulate the whole system in real time. Practice reasoning through component interactions, scaling bottlenecks, and failure modes — out loud, under interview conditions, with an AI that probes every gap.</p>
+      </div>
+      <div class="card reveal reveal-d3">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h3>Clear Communication</h3>
+        <p>Interviews aren't just technical. Use voice interaction to practice narrating your thought process, handling live clarifying questions, and presenting trade-offs with confidence — before the real thing.</p>
+      </div>
+    </div>
+    <div class="stats-band reveal">
+      <div class="stat-item">
+        <div class="stat-item-val">85%</div>
+        <div class="stat-item-label">of senior engineering interviews include system design</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-item-val">3×</div>
+        <div class="stat-item-label">more likely to pass after structured deliberate practice</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-item-val">Top 1%</div>
+        <div class="stat-item-label">engineers share one trait: architectural intuition</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="label"><span class="label-dot"></span>Process</div>
+      <h2>How a session works</h2>
+      <p>Four steps from blank canvas to expert-level feedback in under an hour.</p>
+    </div>
+    <div class="steps-wrap">
+      <div class="steps-line" aria-hidden="true"></div>
+      <div class="steps-grid">
+        <div class="step reveal reveal-d1">
+          <div class="step-num">01</div>
+          <h3>Pick a Problem</h3>
+          <p>Choose from 50+ real-world interview problems — design Twitter, Netflix, Uber, a URL shortener, and more. Difficulty calibrates to your experience level.</p>
+        </div>
+        <div class="step reveal reveal-d2">
+          <div class="step-num">02</div>
+          <h3>Draw &amp; Explain</h3>
+          <p>Use the Excalidraw whiteboard and your voice to draw your architecture and talk through every decision as you would in a real interview.</p>
+        </div>
+        <div class="step reveal reveal-d3">
+          <div class="step-num">03</div>
+          <h3>AI Interviews You</h3>
+          <p>ARIA — our Adaptive Real-time Interview Advisor — acts as your interviewer, asking clarifying questions, probing edge cases, and challenging your assumptions in real time.</p>
+        </div>
+        <div class="step reveal reveal-d4">
+          <div class="step-num">04</div>
+          <h3>Get Deep Feedback</h3>
+          <p>Receive a scored evaluation across scalability, reliability, trade-offs, and communication quality with specific improvement notes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="label"><span class="label-dot"></span>Features</div>
+      <h2>Everything you need to nail it</h2>
+      <p>Built for engineers who want to practice interviews, not just study theory. Every feature simulates the real thing.</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="card feature feature-large reveal">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <h3>Excalidraw Whiteboard</h3>
+        <p>A full Excalidraw canvas embedded in your session. Draw boxes, arrows, labels — whatever your architecture needs. The AI reads your diagram in real-time.</p>
+        <div class="arch-preview">
+          <div style="color:var(--primary);font-weight:600;">Client</div>
+          <div style="padding-left:14px;color:var(--muted);">↓ API Gateway</div>
+          <div style="padding-left:28px;color:var(--amber);">↓ Cache Layer</div>
+          <div style="padding-left:42px;color:var(--primary);">↓ Primary DB</div>
+          <div style="padding-left:42px;color:var(--dim);">↓ Read Replica</div>
+        </div>
+      </div>
+
+      <div class="card feature reveal reveal-d1">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h3>Voice Interaction</h3>
+        <p>Speak your design decisions just like a real interview. Whisper transcription captures every word accurately, even technical terms like "Cassandra" or "consistent hashing."</p>
+      </div>
+
+      <div class="card feature reveal reveal-d2">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+        </div>
+        <h3>ARIA — Your AI Interviewer</h3>
+        <p>ARIA (Adaptive Real-time Interview Advisor) asks follow-up questions, challenges your assumptions, and keeps you on track — just like a real senior engineer would in a loop interview.</p>
+      </div>
+
+      <div class="card feature reveal reveal-d1">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        </div>
+        <h3>Scored Evaluation</h3>
+        <p>Post-session rubric scoring across scalability, reliability, trade-offs, feasibility, and communication quality.</p>
+        <div class="score-bars">
+          <div class="score-row">
+            <div class="score-meta"><span>Scalability</span><span class="score-val">87</span></div>
+            <div class="score-track"><div class="score-fill" style="width:87%"></div></div>
+          </div>
+          <div class="score-row">
+            <div class="score-meta"><span>Reliability</span><span class="score-val">74</span></div>
+            <div class="score-track"><div class="score-fill" style="width:74%"></div></div>
+          </div>
+          <div class="score-row">
+            <div class="score-meta"><span>Communication</span><span class="score-val">91</span></div>
+            <div class="score-track"><div class="score-fill" style="width:91%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card feature reveal reveal-d2">
+        <div class="icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <h3>Diagram Analysis</h3>
+        <p>Submit your whiteboard to the AI and get immediate analysis — missing components, anti-patterns, and specific improvement suggestions.</p>
+        <div style="margin-top:14px;">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;background:var(--primary-bg);border:1px solid rgba(74,124,89,.25);color:var(--primary);">
+            <span style="width:5px;height:5px;background:var(--primary);border-radius:50%;animation:pulse 2s infinite;display:inline-block;"></span>
+            Vision-enabled
+          </span>
+        </div>
+      </div>
+
+      <div class="card feature feature-full reveal">
+        <div style="display:flex;align-items:flex-start;gap:40px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:240px;">
+            <div class="icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            </div>
+            <h3>Experience-Level Calibration</h3>
+            <p>Every mock interview adapts to your level. Whether you're a fresher tackling your first HLD interview or a staff engineer defending trade-offs at scale, the AI calibrates its expectations, follow-up depth, and scoring rubric accordingly.</p>
+          </div>
+          <div class="feature-tags" style="flex:1;min-width:220px;align-content:flex-start;padding-top:8px;">
+            <span class="feature-tag hi">Fresher / Intern</span>
+            <span class="feature-tag hi">Junior Engineer</span>
+            <span class="feature-tag">Mid-Level</span>
+            <span class="feature-tag">Senior Engineer</span>
+            <span class="feature-tag">Staff Engineer</span>
+            <span class="feature-tag">Principal / Architect</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOR ORGANIZATIONS TEASER -->
+<section id="companies">
+  <div class="container">
+    <div class="companies-teaser">
+      <div class="reveal">
+        <div class="label"><span class="label-dot"></span>For Hiring Teams</div>
+        <h2>AI-proctored system design assessments for your pipeline.</h2>
+        <p>Stop spending 3 hours per candidate on manual system design rounds. Create a custom assessment, send invite links, and get back AI-scored results — without a single interviewer in the room.</p>
+      </div>
+      <div class="reveal reveal-d1">
+        <a href="index.html" class="btn btn-primary">See plans for teams →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <div class="label"><span class="label-dot"></span>About ArchWyse</div>
+        <h2>Built by engineers<br><span class="gradient-text">who felt the gap.</span></h2>
+        <p>We spent years preparing for system design interviews at top companies. We read all the books, watched all the videos, could name every component. And we still bombed the first few rounds.</p>
+        <p>The gap wasn't knowledge — it was practice under pressure. The ability to think through a real problem live, handle follow-up questions, and articulate trade-offs while drawing on a whiteboard.</p>
+        <p>ArchWyse was built to close that gap. Not with more content — but with deliberate practice in a setting that mimics the real thing as closely as possible.</p>
+        <div class="about-quote">
+          <p>"AI will write most of the code within five years. The engineers who thrive will be those who design the systems AI runs inside."</p>
+          <cite>— Why we built this</cite>
+        </div>
+      </div>
+      <div class="about-cards reveal reveal-d2">
+        <div class="about-card">
+          <div class="about-card-val">50+</div>
+          <div class="about-card-label">System design problems</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-val">GPT-4o</div>
+          <div class="about-card-label">AI interviewer model</div>
+        </div>
+        <div class="about-card about-card-span" style="background:var(--primary);border-color:var(--primary);">
+          <div class="about-card-val" style="color:white;font-size:22px;line-height:1.4;">"Practice under<br>real pressure."</div>
+          <div class="about-card-label" style="color:rgba(255,255,255,.65);margin-top:8px;">That's what separates good from great.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="label"><span class="label-dot"></span>Contact</div>
+        <h2>Get in touch</h2>
+        <p>Questions about pricing, enterprise plans, partnerships, or just want to say hi? We reply to every message.</p>
+        <div class="contact-methods">
+          <a href="mailto:support@archwyse.com" class="contact-method">
+            <div class="method-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            support@archwyse.com
+          </a>
+        </div>
+      </div>
+      <form class="contact-form reveal reveal-d1" id="contact-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Smith" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic">
+            <option value="">Select a topic</option>
+            <option value="pricing">Pricing question</option>
+            <option value="enterprise">Enterprise / Team plan</option>
+            <option value="bug">Report a bug</option>
+            <option value="feature">Feature request</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Tell us what's on your mind..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start;padding:13px 28px;">Send Message</button>
+        <div class="form-success" id="form-success">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Message sent! We'll be in touch soon.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="footer-logo">
+          <img src="favicon.png" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;">
+          ArchWyse
+        </a>
+        <p class="footer-desc">AI mock interviews for system design. Practice defending architecture decisions under pressure — before the real interview.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="index.html">For Organizations</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <!-- <li><a href="#">Careers</a></li> -->
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ArchWyse. Built for engineers who think in systems.</p>
+      <div class="footer-status">
+        <span class="status-dot"></span>
+        All systems operational
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script defer src="app.js"></script>
+</body>
+</html>

@@ -115,22 +115,24 @@
     .mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);transition:color .2s}
     .mobile-menu a:hover{color:var(--text)}
     .mobile-menu .btn{margin-top:20px;justify-content:center}
+    .mobile-menu .btn-primary{color:#fff}
 
-    #hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden}
+    #hero{display:flex;align-items:center;padding:96px 0 52px;position:relative;overflow:hidden}
     .hero-bg-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(74,78,74,.13) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none;opacity:.5}
-    .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:1;max-width:1320px;margin:0 auto;width:100%}
+    .hero-inner{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center;position:relative;z-index:1;width:100%}
     .hero-text{animation:fadeUp .7s ease both}
     .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--primary-bg);border:1px solid rgba(74,124,89,.22);border-radius:20px;font-size:13px;font-weight:500;color:var(--primary);margin-bottom:26px}
     .eyebrow-dot{width:6px;height:6px;background:var(--primary);border-radius:50%;animation:pulse 2s ease-in-out infinite}
-    .hero-text h1{font-family:'Sora',sans-serif;font-size:clamp(38px,5.2vw,66px);font-weight:800;letter-spacing:-.04em;line-height:1.06;margin-bottom:22px}
-    .hero-sub{font-size:17px;color:var(--muted);line-height:1.75;margin-bottom:34px;max-width:480px}
+    .hero-text h1{font-family:'Sora',sans-serif;font-size:clamp(30px,4.0vw,50px);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:18px}
+    .hero-sub{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:28px;max-width:440px}
     .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
     .hero-stats{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
     .hero-stat{display:flex;flex-direction:column;gap:2px}
-    .hero-stat strong{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;color:var(--text)}
+    .hero-stat strong{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--text)}
     .hero-stat span{font-size:12px;color:var(--dim)}
     .hero-stat-sep{width:1px;height:30px;background:var(--border)}
     .hero-diagram{animation:fadeUp .7s ease .15s both}
+    .hero-wrap{max-width:1400px;padding:40px 200px 0 145px}
     .hero-diagram svg{width:100%;height:auto;border-radius:20px;box-shadow:0 20px 60px rgba(74,78,74,.13),0 4px 16px rgba(74,78,74,.07)}
 
     #trust{padding:28px 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
@@ -231,9 +233,11 @@
 
     @media(max-width:960px){
       :root{--gap:72px}
+      .hero-wrap{padding:40px 48px 0}
       .nav-links{display:none}
       .nav-menu-btn{display:block}
       .nav-actions .btn-ghost{display:none}
+      .nav-actions .btn-primary{display:none}
       .hero-inner{grid-template-columns:1fr;gap:40px}
       .hero-diagram{max-width:480px;margin:0 auto}
       .why-pillars{grid-template-columns:1fr 1fr}
@@ -250,6 +254,7 @@
     @media(max-width:580px){
       :root{--gap:56px}
       .container{padding:0 16px}
+      .hero-wrap{padding:0 24px}
       #hero{padding:88px 0 48px}
       .hero-ctas{flex-direction:column;align-items:stretch}
       .hero-ctas .btn{justify-content:center}
@@ -286,11 +291,11 @@
       <li><a href="#why">Why</a></li>
       <li><a href="#features">Features</a></li>
       <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="index.html">For Organizations</a></li>
       <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="#contact" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">Contact</a>
+      <a href="index.html" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Organizations</a>
       <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:8px 18px;font-size:14px;">Start free →</a>
       <button class="nav-menu-btn" id="menu-toggle" aria-label="Toggle menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -306,9 +311,9 @@
   <a href="#why" class="mob-link">Why ArchWyse</a>
   <a href="#features" class="mob-link">Features</a>
   <a href="#how-it-works" class="mob-link">How It Works</a>
-  <a href="index.html" class="mob-link">For Organizations</a>
   <a href="#about" class="mob-link">About</a>
   <a href="#contact" class="mob-link">Contact</a>
+  <a href="index.html" class="mob-link">For Organizations</a>
   <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Start free →</a>
 </div>
 
@@ -317,7 +322,7 @@
 <!-- HERO -->
 <section id="hero">
   <div class="hero-bg-dots" aria-hidden="true"></div>
-  <div class="container" style="max-width:1400px;padding:0 32px;">
+  <div class="container hero-wrap">
     <div class="hero-inner">
 
       <div class="hero-text">
@@ -330,7 +335,7 @@
         <div class="hero-stats">
           <div class="hero-stat"><strong>50+</strong><span>Interview problems</span></div>
           <div class="hero-stat-sep"></div>
-          <div class="hero-stat"><strong>GPT-4o</strong><span>AI interviewer</span></div>
+          <div class="hero-stat"><strong>ARIA</strong><span>AI interviewer</span></div>
           <div class="hero-stat-sep"></div>
           <div class="hero-stat"><strong>Free</strong><span>To get started</span></div>
         </div>
@@ -340,7 +345,7 @@
         <img
           src="hero-image-candidates.png"
           alt="ArchWyse mock interview — AI interviewer asks follow-up questions as you build your system design on the whiteboard"
-          style="width:calc(100% + 60px);border-radius:16px;box-shadow:0 24px 64px rgba(74,78,74,.14);display:block;"
+          style="width:100%;border-radius:16px;box-shadow:0 24px 64px rgba(74,78,74,.14);display:block;"
         />
       </div>
 
@@ -557,7 +562,7 @@
           <div class="about-card-label">System design problems</div>
         </div>
         <div class="about-card">
-          <div class="about-card-val">GPT-4o</div>
+          <div class="about-card-val">ARIA</div>
           <div class="about-card-label">AI interviewer model</div>
         </div>
         <div class="about-card about-card-span" style="background:var(--primary);border-color:var(--primary);">

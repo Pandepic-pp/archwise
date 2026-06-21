@@ -11,16 +11,21 @@ const menuToggle  = document.getElementById('menu-toggle');
 const mobileMenu  = document.getElementById('mobile-menu');
 
 menuToggle.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
+  const isOpen = mobileMenu.classList.toggle('open');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 
 document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  link.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
 });
 
 document.addEventListener('click', e => {
   if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
     mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
   }
 });
 
@@ -35,6 +40,31 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ tabs + accordion
+document.querySelectorAll('.faq-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.faq-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.faq-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('faq-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    item.closest('.faq-panel').querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
 
 // Contact form
 const form    = document.getElementById('contact-form');

@@ -183,18 +183,6 @@
     .plan-btn{justify-content:center;width:100%}
     .pricing-note{text-align:center;font-size:14px;color:var(--muted)}
     .pricing-note strong{color:var(--primary)}
-    .pricing-enterprise{background:var(--surface);border:1.5px solid rgba(74,124,89,.4);border-radius:var(--r);padding:32px 28px;margin-top:20px;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:start;transition:border-color .2s,box-shadow .2s}
-    .pricing-enterprise:hover{border-color:var(--primary);box-shadow:0 6px 28px rgba(74,124,89,.1)}
-    .enterprise-badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary-bg);color:var(--primary);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(74,124,89,.3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
-    .enterprise-per-invite{font-size:13px;color:var(--dim);margin-bottom:16px}
-    .enterprise-per-invite strong{color:var(--primary)}
-    .enterprise-features{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px}
-    .enterprise-features li{font-size:14px;color:var(--muted);display:flex;align-items:center;gap:9px}
-    .enterprise-features li::before{content:'';width:14px;height:14px;min-width:14px;border-radius:50%;background:var(--primary-bg) url("data:image/svg+xml,%3Csvg viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5l2.5 2.5L8 3' stroke='%234A7C59' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/10px no-repeat;border:1.5px solid rgba(74,124,89,.4)}
-    .enterprise-cta{text-align:right;min-width:200px}
-    .enterprise-price-display{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:var(--text);letter-spacing:-.03em;line-height:1;margin-bottom:4px}
-    .enterprise-price-display span{font-size:14px;font-weight:500;color:var(--dim)}
-    .enterprise-price-sub{font-size:12px;color:var(--dim);margin-bottom:16px}
 
     /* CTA BAND */
     #cta{padding:var(--gap) 0}
@@ -286,9 +274,6 @@
       .feature-full{grid-column:span 2}
       .why-grid,.contact-grid{grid-template-columns:1fr;gap:44px}
       .pricing-grid{grid-template-columns:1fr}
-      .pricing-enterprise{grid-template-columns:1fr}
-      .enterprise-features{grid-template-columns:1fr}
-      .enterprise-cta{text-align:left;min-width:0}
       .footer-grid{grid-template-columns:1fr 1fr}
       .footer-grid>div:first-child{grid-column:span 2}
     }
@@ -653,29 +638,7 @@
 
     </div>
 
-    <!-- Enterprise -->
-    <div class="pricing-enterprise reveal">
-      <div>
-        <div class="enterprise-badge">Enterprise</div>
-        <div class="plan-name" style="margin-top:4px;">Custom Invite Volume</div>
-        <p class="enterprise-per-invite">Pick your invite count — pay <strong>$3.00 / invite</strong> per month. Minimum 100 invites.</p>
-        <ul class="enterprise-features">
-          <li>100–1,000 invite links / month</li>
-          <li>AI proctoring</li>
-          <li>Candidate trust reports</li>
-          <li>Dedicated account support</li>
-          <li>Violation evidence exports</li>
-          <li>Custom assessment branding</li>
-        </ul>
-      </div>
-      <div class="enterprise-cta">
-        <div class="enterprise-price-display">$3.00<span> / invite</span></div>
-        <div class="enterprise-price-sub">× your invite count / month</div>
-        <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary plan-btn">Get Started →</a>
-      </div>
-    </div>
-
-    <p class="pricing-note reveal">Need more invites mid-cycle? Top up at <strong>$3.00 / invite</strong> — credited instantly.</p>
+    <p class="pricing-note reveal">Need more invites mid-cycle? Top up at <strong>$3.00 / invite</strong> — credited instantly. Top-up credits <strong>never expire</strong> and roll over across every renewal, even if your plan lapses.</p>
   </div>
 </section>
 

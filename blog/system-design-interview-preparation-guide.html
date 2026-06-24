@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../favicon.png" type="image/png" />
+  <title>System Design Interview Preparation Guide 2026 — ArchWyse</title>
+  <meta name="description" content="Learn how to prepare for system design interviews: what interviewers score you on, the 6 evaluation dimensions, common mistakes to avoid, key concepts to master, and how to practice with AI mock interviews." />
+  <meta name="keywords" content="system design interview preparation, how to prepare for system design interview, system design interview tips, system design interview practice, HLD interview guide, mock system design interview" />
+  <meta name="author" content="ArchWyse" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://archwyse.com/blog/system-design-interview-preparation-guide" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://archwyse.com/blog/system-design-interview-preparation-guide" />
+  <meta property="og:title" content="System Design Interview Preparation Guide 2026 — ArchWyse" />
+  <meta property="og:description" content="What interviewers score you on, common mistakes, key concepts, and how to practice with AI mock interviews." />
+  <meta property="og:image" content="https://archwyse.com/og-image.png" />
+  <meta property="og:site_name" content="ArchWyse" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="System Design Interview Preparation Guide 2026 — ArchWyse" />
+  <meta name="twitter:description" content="What interviewers score you on, common mistakes, key concepts, and how to practice effectively." />
+  <meta name="twitter:image" content="https://archwyse.com/og-image.png" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://archwyse.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://archwyse.com/blog/"},{"@type":"ListItem","position":3,"name":"System Design Interview Preparation Guide 2026","item":"https://archwyse.com/blog/system-design-interview-preparation-guide"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"How to Prepare for System Design Interviews in 2026: The Complete Guide","description":"A complete guide to system design interview preparation — covering what interviewers evaluate, the 6 scoring dimensions, common mistakes, key concepts to know, and how to practice effectively with AI-powered mock interviews.","image":"https://archwyse.com/og-image.png","author":{"@type":"Organization","name":"ArchWyse","url":"https://archwyse.com"},"publisher":{"@type":"Organization","name":"ArchWyse","logo":{"@type":"ImageObject","url":"https://archwyse.com/favicon.png"}},"datePublished":"2026-06-23","dateModified":"2026-06-23","mainEntityOfPage":{"@type":"WebPage","@id":"https://archwyse.com/blog/system-design-interview-preparation-guide"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How long should a system design interview be?","acceptedAnswer":{"@type":"Answer","text":"Most system design interviews run 45 to 60 minutes. The first 5 to 10 minutes should go toward requirements gathering, 20 to 25 minutes on your initial design, and the remainder on deep dives and trade-off discussion."}},{"@type":"Question","name":"How many times should I practice before my system design interview?","acceptedAnswer":{"@type":"Answer","text":"Aim for at least 10 to 15 end-to-end practice sessions — not just reading, but actively working through a question with a timer. AI mock interview tools make this feasible without needing to find a practice partner every time."}},{"@type":"Question","name":"What is the difference between junior and senior system design interview expectations?","acceptedAnswer":{"@type":"Answer","text":"Junior engineers are expected to produce a coherent high-level design and show they understand the core components. Senior engineers must proactively identify failure modes, propose non-obvious optimizations, and defend trade-offs with reasoning. Staff engineers are evaluated on whether they can simplify the problem scope and drive the conversation."}},{"@type":"Question","name":"Should I use a specific notation for architecture diagrams in system design interviews?","acceptedAnswer":{"@type":"Answer","text":"No formal notation is required. Use simple boxes and arrows. What matters is that the diagram is legible and that you can narrate what each component does and why."}},{"@type":"Question","name":"What are the most common system design interview topics?","acceptedAnswer":{"@type":"Answer","text":"The most common topics include: distributed system design (URL shorteners, notification services, chat apps), database selection (SQL vs NoSQL), caching strategies, rate limiting, message queues, load balancing, CAP theorem, and API design. Mastering these fundamentals covers most interview scenarios."}}]}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --bg:        #F7F4EF;
+      --surface:   #FFFFFF;
+      --border:    rgba(74,78,74,0.12);
+      --border-h:  rgba(74,124,89,0.38);
+      --text:      #1A1A1A;
+      --muted:     #6B6358;
+      --dim:       #9A9490;
+      --primary:   #4A7C59;
+      --primary-dk:#3a6347;
+      --primary-bg:rgba(74,124,89,0.08);
+      --amber:     #C4A66A;
+      --amber-bg:  rgba(196,166,106,0.1);
+      --neutral:   #4A4E4A;
+      --r:         12px;
+      --r-sm:      8px;
+      --max-w:     1120px;
+    }
+
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+    .container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+    h1,h2,h3,h4{font-family:'Sora',system-ui,sans-serif}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r-sm);font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s ease;border:none;font-family:'Inter',sans-serif;line-height:1;white-space:nowrap}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dk);transform:translateY(-1px);box-shadow:0 8px 28px rgba(74,124,89,.28)}
+    .btn-ghost{background:transparent;color:var(--neutral);border:1.5px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--border-h);color:var(--primary);background:var(--primary-bg)}
+
+    /* NAV */
+    nav#navbar{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent}
+    nav#navbar.scrolled{background:rgba(247,244,239,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--border);box-shadow:0 1px 20px rgba(74,78,74,.07)}
+    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+    .nav-links a{font-size:14px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+    .nav-menu-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;line-height:0}
+    .mobile-menu{display:none;position:fixed;inset:0;top:65px;background:rgba(247,244,239,.97);backdrop-filter:blur(16px);z-index:99;padding:32px 24px;flex-direction:column;gap:4px;border-top:1px solid var(--border)}
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);transition:color .2s}
+    .mobile-menu a:hover{color:var(--text)}
+    .mobile-menu .btn{margin-top:20px;justify-content:center}
+    .mobile-menu .btn-primary{color:#fff}
+
+    /* BREADCRUMB */
+    .breadcrumb-bar{padding:16px 0;border-bottom:1px solid var(--border);background:var(--surface);margin-top:65px}
+    .breadcrumb{list-style:none;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .breadcrumb li{font-size:13px;color:var(--dim)}
+    .breadcrumb li:not(:last-child)::after{content:'/';margin-left:6px;color:var(--dim)}
+    .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s}
+    .breadcrumb a:hover{color:var(--primary)}
+    .breadcrumb li[aria-current]{color:var(--muted)}
+
+    /* ARTICLE HEADER */
+    .article-header{padding:56px 0 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .article-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+    .article-tag{background:var(--primary-bg);color:var(--primary);border:1px solid rgba(74,124,89,.22);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+    .article-date,.article-read{font-size:13px;color:var(--dim)}
+    .article-header h1{font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:20px;max-width:820px}
+    .article-lead{font-size:18px;color:var(--muted);line-height:1.75;max-width:680px}
+
+    /* ARTICLE LAYOUT */
+    .article-layout{padding:64px 0 96px}
+    .article-body{max-width:740px}
+    .article-body h2{font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.03em;margin:56px 0 14px;line-height:1.2;color:var(--text)}
+    .article-body h2:first-of-type{margin-top:0}
+    .article-body h3{font-size:18px;font-weight:700;letter-spacing:-.02em;margin:32px 0 10px;color:var(--text)}
+    .article-body p{font-size:16px;color:var(--text);line-height:1.85;margin-bottom:16px}
+    .article-body ul,.article-body ol{padding-left:24px;margin-bottom:20px}
+    .article-body li{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:8px}
+    .article-body strong{font-weight:600}
+    .article-body a{color:var(--primary);text-decoration:underline;text-decoration-color:rgba(74,124,89,.35);text-underline-offset:3px;transition:text-decoration-color .2s}
+    .article-body a:hover{text-decoration-color:var(--primary)}
+
+    /* TOC */
+    .toc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:48px}
+    .toc-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+    .toc ol{padding-left:20px;margin:0}
+    .toc li{font-size:14px;margin-bottom:8px;color:var(--muted)}
+    .toc a{color:var(--muted);text-decoration:none;transition:color .2s}
+    .toc a:hover{color:var(--primary)}
+
+    /* CALLOUTS */
+    .callout{background:var(--amber-bg);border:1px solid rgba(196,166,106,.35);border-radius:var(--r-sm);padding:18px 22px;margin:24px 0}
+    .callout p{font-size:15px;color:var(--text);margin:0;line-height:1.7}
+    .callout strong{color:var(--neutral)}
+
+    /* ARTICLE INLINE CTA */
+    .article-cta-box{background:var(--primary);border-radius:var(--r);padding:36px;margin:48px 0}
+    .article-cta-box strong{display:block;font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:10px}
+    .article-cta-box p{font-size:15px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:22px}
+    .article-cta-box .btn{background:white;color:var(--primary)}
+    .article-cta-box .btn:hover{background:rgba(255,255,255,.92);transform:translateY(-1px)}
+
+    /* CONCEPT GRID */
+    .concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 28px}
+    .concept-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:16px 18px;transition:border-color .2s}
+    .concept-card:hover{border-color:var(--border-h)}
+    .concept-card strong{font-size:14px;font-weight:600;color:var(--text);display:block;margin-bottom:4px}
+    .concept-card span{font-size:13px;color:var(--muted);line-height:1.6}
+
+    /* QUESTION LIST */
+    .question-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:20px 0 28px}
+    .question-item{display:flex;gap:16px;padding:16px 22px;border-bottom:1px solid var(--border);align-items:flex-start}
+    .question-item:last-child{border-bottom:none}
+    .question-num{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--primary);background:var(--primary-bg);border:1px solid rgba(74,124,89,.2);width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+    .question-item p{font-size:15px;color:var(--text);line-height:1.55;margin:0}
+
+    /* DIMENSION CARDS */
+    .dimension-item{border-left:3px solid var(--primary);padding:18px 20px;background:var(--surface);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-bottom:14px;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .dimension-item h3{margin-top:0;margin-bottom:8px;font-size:16px}
+    .dimension-item p{margin:0;font-size:15px;color:var(--muted)}
+
+    /* FOOTER */
+    footer{background:var(--neutral);color:rgba(255,255,255,.8);padding:56px 0 28px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-logo{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:white;text-decoration:none;margin-bottom:12px}
+    .footer-desc{font-size:14px;color:rgba(255,255,255,.4);line-height:1.65;max-width:240px}
+    .footer-col h4{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);margin-bottom:14px;letter-spacing:.1em;text-transform:uppercase}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .footer-col a{font-size:14px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}
+    .footer-col a:hover{color:white}
+    .footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .footer-bottom p{font-size:13px;color:rgba(255,255,255,.3)}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+    .footer-status{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--amber)}
+    .status-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+
+    /* RESPONSIVE */
+    @media(max-width:960px){
+      .nav-links{display:none}
+      .nav-menu-btn{display:block}
+      .nav-actions .btn-ghost{display:none}
+      .concept-grid{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr 1fr}
+      .footer-grid>div:first-child{grid-column:span 2}
+    }
+    @media(max-width:580px){
+      .container{padding:0 16px}
+      .article-header{padding:40px 0 36px}
+      .article-layout{padding:40px 0 64px}
+      .article-cta-box{padding:28px 24px}
+      .footer-grid{grid-template-columns:1fr}
+      .footer-grid>div:first-child{grid-column:span 1}
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../favicon.png" alt="" style="width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;">
+      ArchWyse
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html#process">How It Works</a></li>
+      <li><a href="../index.html#features">Features</a></li>
+      <li><a href="../index.html#pricing">Pricing</a></li>
+      <li><a href="index.html" style="color:var(--primary);font-weight:600;">Blog</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="../engineers.html" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Engineers</a>
+      <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:8px 18px;font-size:14px;">Get started free →</a>
+      <button class="nav-menu-btn" id="menu-toggle" aria-label="Toggle menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu" role="navigation">
+  <a href="../index.html#process">How It Works</a>
+  <a href="../index.html#features">Features</a>
+  <a href="../index.html#pricing">Pricing</a>
+  <a href="index.html">Blog</a>
+  <a href="../engineers.html">For Engineers</a>
+  <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Get started free →</a>
+</div>
+
+<nav aria-label="Breadcrumb" class="breadcrumb-bar">
+  <div class="container">
+    <ol class="breadcrumb">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="index.html">Blog</a></li>
+      <li aria-current="page">System Design Interview Preparation Guide</li>
+    </ol>
+  </div>
+</nav>
+
+<header class="article-header">
+  <div class="container">
+    <div class="article-meta">
+      <span class="article-tag">Interview Prep</span>
+      <span class="article-date">June 23, 2026</span>
+      <span class="article-read">· 14 min read</span>
+    </div>
+    <h1>How to Prepare for System Design Interviews in 2026: The Complete Guide</h1>
+    <p class="article-lead">Most engineers fail system design interviews not because they lack technical knowledge, but because they don't know what interviewers are actually evaluating — or they've never practiced in a realistic setting. This guide covers both.</p>
+  </div>
+</header>
+
+<main>
+  <div class="article-layout container">
+    <article class="article-body">
+
+      <nav class="toc" aria-label="Table of contents">
+        <div class="toc-label">In this guide</div>
+        <ol>
+          <li><a href="#what-interviewers-look-for">What interviewers look for (the 6 dimensions)</a></li>
+          <li><a href="#common-mistakes">5 common mistakes that kill otherwise strong candidates</a></li>
+          <li><a href="#key-concepts">System design concepts every engineer must know</a></li>
+          <li><a href="#how-to-practice">How to practice system design interviews effectively</a></li>
+          <li><a href="#practice-questions">10 questions to practice right now</a></li>
+          <li><a href="#seniority">What changes by seniority level</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </nav>
+
+      <p>System design interviews are the hardest part of the software engineering interview process for most people. Unlike a coding challenge — which has a test suite and a right answer — a system design interview is open-ended, conversational, and evaluated subjectively by the person across the table (or, increasingly, by an AI).</p>
+
+      <p>That subjectivity is actually good news. It means strong preparation has a much bigger impact on your outcome than innate ability. Engineers who know what they're being evaluated on, have practiced in a realistic setting, and can articulate their reasoning clearly will consistently outperform engineers who know more but can't communicate it under pressure.</p>
+
+      <p>This guide covers exactly that: the six dimensions interviewers use to evaluate you, the mistakes that consistently trip up strong candidates, the concepts you need to have internalized, and — critically — how to actually practice rather than just read about it.</p>
+
+      <section id="what-interviewers-look-for">
+        <h2>What Interviewers Actually Look For: The 6 Evaluation Dimensions</h2>
+
+        <p>System design interviews are not graded on a single scale. Experienced interviewers — and AI assessment platforms like <a href="https://archwyse.com" target="_blank" rel="noopener">ArchWyse</a> — evaluate candidates across six distinct dimensions. Understanding these dimensions is the most important thing you can do before your next interview, because each one requires different preparation.</p>
+
+        <div class="dimension-item">
+          <h3>1. Requirements Gathering</h3>
+          <p>Before touching the whiteboard, strong candidates spend 5–10 minutes clarifying what they're actually building. What's the scale — hundreds of users or millions? What are the read/write patterns? Does the system need to be globally distributed? What are the latency requirements? Interviewers evaluate whether you ask the right clarifying questions before jumping to a solution.</p>
+        </div>
+
+        <div class="dimension-item">
+          <h3>2. High-Level Architecture</h3>
+          <p>Your ability to produce a clear, coherent system diagram covering the core components: clients, load balancers, API gateway, services, databases, caches, and message queues. The first pass doesn't need to be perfect — it needs to be a credible starting point you can evolve. Interviewers want to see that you think in systems, not isolated components.</p>
+        </div>
+
+        <div class="dimension-item">
+          <h3>3. APIs and Data Model</h3>
+          <p>Define the key API endpoints and the data model that supports them. What tables or collections exist? What are the primary keys? How do reads and writes flow through the schema? Many candidates gloss over this dimension, but it's central to evaluation — especially for senior and staff roles.</p>
+        </div>
+
+        <div class="dimension-item">
+          <h3>4. Scalability and Reliability</h3>
+          <p>Where does your system break under load? How do you handle database write bottlenecks? Where do you add caching? What happens when a service goes down? Interviewers want to see that you've thought past the happy path and have a concrete plan for the system's failure modes.</p>
+        </div>
+
+        <div class="dimension-item">
+          <h3>5. Trade-offs and Depth</h3>
+          <p>Every design decision involves a trade-off. SQL vs. NoSQL? Synchronous vs. asynchronous processing? Strong consistency vs. eventual consistency? Sharding by user ID vs. by region? Strong candidates don't just pick an approach — they explain why, acknowledge the downsides, and signal that they'd revisit the decision if requirements changed.</p>
+        </div>
+
+        <div class="dimension-item">
+          <h3>6. Communication Clarity</h3>
+          <p>You can have the best design in the room and still not get the offer if you can't explain it. Interviewers evaluate how clearly you narrate your thinking, how you respond to follow-up questions, how you handle pushback, and whether you drive the conversation or wait to be prompted.</p>
+        </div>
+
+        <div class="callout">
+          <p><strong>Key insight:</strong> Most preparation advice focuses on concepts (CAP theorem, sharding, etc.) but ignores the communication dimension. That's where strong technical candidates most often fall short. Practice explaining your design decisions out loud, not just drawing them.</p>
+        </div>
+      </section>
+
+      <section id="common-mistakes">
+        <h2>5 Common Mistakes That Kill Otherwise Strong Candidates</h2>
+
+        <h3>1. Jumping straight to the solution</h3>
+        <p>The most consistent mistake in system design interviews: opening the whiteboard before understanding the problem. Candidates who dive straight into drawing boxes signal that they've memorized a design, not that they can think through a new problem. Spend the first 5–10 minutes on requirements gathering — ask about scale, consistency requirements, latency targets, and geographic distribution. Interviewers often deliberately leave these details ambiguous to see if you ask.</p>
+
+        <h3>2. Over-engineering the first draft</h3>
+        <p>Your initial design should be simple. Add complexity only when you've identified a bottleneck or requirement that demands it. Candidates who open with multi-region replication, event sourcing, and a service mesh on their first pass tend to lose the thread, confuse their interviewer, and run out of time. Start simple. Then layer in complexity with a clear rationale: "At 1M writes/day, a single PostgreSQL instance will hit its ceiling — here's how I'd approach horizontal scaling."</p>
+
+        <h3>3. Ignoring the data layer</h3>
+        <p>Many candidates spend 80% of their time on the service layer and gloss over their database choices. Your schema design, indexing strategy, choice of database engine, and query patterns are often the most revealing part of your design — especially for senior roles. If you're using PostgreSQL, explain what your indexes look like. If you're using Cassandra, explain your partition key strategy.</p>
+
+        <h3>4. Monologuing without checking in</h3>
+        <p>System design is a conversation, not a presentation. Many candidates deliver a 40-minute monologue and then look up to find a confused interviewer who wanted to redirect them 20 minutes ago. Pause regularly — every 5–7 minutes — to check in: "Does this direction make sense, or should I go deeper on the caching layer?" Interviewers want to see that you can take feedback mid-design, not just produce output.</p>
+
+        <h3>5. Spreading depth evenly across everything</h3>
+        <p>You don't have 60 minutes to design every component in equal depth. Identify the 2–3 most technically interesting or challenging parts of the system — usually where scale, reliability, or consistency are hardest — and go deep on those. Explicitly signal that you know what the hard problems are: "The notification delivery guarantee is the trickiest part here — let me spend a few minutes on that before moving on to the API layer."</p>
+      </section>
+
+      <div class="article-cta-box">
+        <strong>Practice these dimensions with AI feedback</strong>
+        <p>ArchWyse's AI interviewer runs full mock system design sessions — voice-based, with follow-up questions, whiteboard support, and structured feedback across all 6 dimensions. No practice partner needed, no scheduling.</p>
+        <a href="https://archwyse.com/engineers" target="_blank" rel="noopener" class="btn">Practice for free →</a>
+      </div>
+
+      <section id="key-concepts">
+        <h2>System Design Concepts Every Engineer Must Know</h2>
+
+        <p>You don't need to memorize every distributed systems paper, but you need a working mental model of the following. For each concept, practice explaining it out loud in 90 seconds. If you can't do that clearly, you're not ready to apply it under interview pressure.</p>
+
+        <div class="concept-grid">
+          <div class="concept-card">
+            <strong>Load Balancing</strong>
+            <span>Round-robin, least connections, consistent hashing. Know when each applies and how to handle session affinity.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Caching</strong>
+            <span>CDN, in-process cache, distributed cache (Redis/Memcached). Cache-aside vs. write-through vs. write-behind. Cache invalidation strategies.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Databases</strong>
+            <span>SQL vs. NoSQL — not just the labels but when each wins. Read replicas, sharding strategies, ACID vs. eventual consistency.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Message Queues</strong>
+            <span>Kafka, SQS, RabbitMQ. At-least-once vs. exactly-once delivery. Dead letter queues. Consumer group patterns.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Rate Limiting</strong>
+            <span>Token bucket, sliding window counter. Where to enforce it (API gateway vs. per-service). Distributed rate limiting across instances.</span>
+          </div>
+          <div class="concept-card">
+            <strong>CAP Theorem</strong>
+            <span>Consistency, Availability, Partition tolerance — and crucially, what your specific system actually needs from this trade-off.</span>
+          </div>
+          <div class="concept-card">
+            <strong>API Design</strong>
+            <span>REST, GraphQL, gRPC. Idempotency. Pagination patterns. Versioning. Rate limiting headers. Webhooks vs. polling.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Blob Storage</strong>
+            <span>Object stores (S3, GCS) vs. file systems. Pre-signed URLs. CDN integration. Chunked uploads for large files.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Search</strong>
+            <span>Elasticsearch, inverted indexes, full-text search. When to use a dedicated search layer vs. database full-text search.</span>
+          </div>
+          <div class="concept-card">
+            <strong>Distributed Coordination</strong>
+            <span>Leader election, distributed locks (Redis SETNX, Zookeeper). Two-phase commit. Saga pattern for distributed transactions.</span>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>How to actually learn these:</strong> Don't just read definitions. Pick a concept and explain it as if you're teaching it to a junior engineer. Then explain how you'd apply it in a real system design. The ability to connect a concept to a concrete design decision is what separates candidates who've studied from candidates who've internalized.</p>
+        </div>
+      </section>
+
+      <section id="how-to-practice">
+        <h2>How to Practice System Design Interviews Effectively</h2>
+
+        <p>The biggest gap between how engineers prepare and how they should prepare is this: most people read articles and watch videos about system design. Almost none of them practice actually doing an interview.</p>
+
+        <p>Reading about system design will not make you good at system design interviews. Only doing system design interviews will do that.</p>
+
+        <h3>Practice with a timer and a blank page</h3>
+        <p>Pick a question (see the list below), set a 45-minute timer, open a blank whiteboard or document, and work through the problem from scratch. Narrate your thinking out loud as if you're in a real interview. This single habit will reveal gaps in your knowledge faster than any other method.</p>
+
+        <h3>Get structured feedback on your sessions</h3>
+        <p>Reading and self-assessment is limited because you don't know what you don't know. The most valuable feedback in system design comes from someone (or something) that can evaluate you across all six dimensions and tell you specifically where your reasoning was weak.</p>
+
+        <p>AI-powered mock interview tools like <a href="https://archwyse.com/engineers" target="_blank" rel="noopener">ArchWyse</a> conduct full interactive sessions with follow-up questions, evaluate your design in real time, and give you a structured breakdown by dimension. This is the closest thing to realistic interview practice most engineers can access without burning a favor with a senior engineer friend.</p>
+
+        <h3>Practice the conversation, not just the design</h3>
+        <p>System design is a verbal exercise as much as a technical one. Practice narrating your thought process as you draw. Don't just produce a diagram — explain every decision as you make it. "I'm choosing PostgreSQL here because our data is highly relational and we need strong consistency for payment records, but I'd switch to Cassandra if our write rate exceeded 100k/sec."</p>
+
+        <h3>Review your weak dimension after every session</h3>
+        <p>After each practice session, identify which of the six dimensions you were weakest on and target that specifically in your next session. Focused iteration on weak spots is far more effective than generic repetition.</p>
+      </section>
+
+      <section id="practice-questions">
+        <h2>10 System Design Questions to Practice Right Now</h2>
+
+        <p>These questions span a range of difficulty and cover the core patterns that appear repeatedly in engineering interviews at all levels. Each one can be practiced in 45–60 minutes.</p>
+
+        <div class="question-list">
+          <div class="question-item">
+            <div class="question-num">1</div>
+            <p><strong>Design a URL shortener</strong> (e.g. bit.ly) — Covers: hashing, read-heavy caching, database choice, redirect latency</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">2</div>
+            <p><strong>Design a rate limiter</strong> — Covers: distributed counters, Redis, token bucket vs. sliding window, API gateway patterns</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">3</div>
+            <p><strong>Design a notification service</strong> (push, email, SMS) — Covers: message queues, fan-out, delivery guarantees, retry logic</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">4</div>
+            <p><strong>Design a real-time chat application</strong> — Covers: WebSockets, message ordering, offline delivery, group chat fan-out</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">5</div>
+            <p><strong>Design a video streaming platform</strong> (YouTube) — Covers: blob storage, CDN, transcoding pipelines, chunked upload/playback</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">6</div>
+            <p><strong>Design Twitter's timeline feed</strong> — Covers: fan-out on write vs. read, celebrity problem, eventual consistency, cache invalidation</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">7</div>
+            <p><strong>Design a distributed key-value store</strong> — Covers: consistent hashing, replication factor, CAP trade-offs, compaction</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">8</div>
+            <p><strong>Design a ride-hailing dispatch system</strong> (Uber) — Covers: geospatial indexing, real-time matching, driver location updates at scale</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">9</div>
+            <p><strong>Design a search autocomplete system</strong> — Covers: trie vs. search index, prefix matching, caching popular queries, low latency at scale</p>
+          </div>
+          <div class="question-item">
+            <div class="question-num">10</div>
+            <p><strong>Design an e-commerce checkout flow</strong> — Covers: inventory reservation, distributed transactions, idempotent payment APIs, order state machine</p>
+          </div>
+        </div>
+
+        <p>For each question, work through all six dimensions: requirements gathering, high-level design, APIs and data model, scalability and reliability, trade-offs, and communication. Time yourself. After completing a session, identify the dimension you were weakest on and research it specifically.</p>
+      </section>
+
+      <section id="seniority">
+        <h2>What Changes by Seniority Level</h2>
+
+        <p>The same system design question will be evaluated very differently depending on the role you're interviewing for. Understanding these differences is important — both for calibrating your preparation and for knowing what to signal during the interview itself.</p>
+
+        <h3>Junior / Mid-level Engineers (L3–L4)</h3>
+        <p>Interviewers expect a coherent high-level design that covers the core components. You should be able to articulate why you're making major architectural choices (why this database, why this communication pattern) even if you can't go deep on every one. The bar for scalability discussion is lower, but you should at least identify the obvious bottlenecks.</p>
+
+        <h3>Senior Engineers (L5)</h3>
+        <p>The expectation shifts significantly. Interviewers expect you to proactively identify failure modes without being prompted, propose non-obvious optimizations, and defend your trade-offs with concrete reasoning. You should be driving the conversation, not waiting to be asked questions. The data layer and scalability dimensions receive much more scrutiny.</p>
+
+        <h3>Staff / Principal Engineers (L6+)</h3>
+        <p>At this level, interviewers are evaluating whether you can simplify a problem before solving it, whether you know which constraints are actually load-bearing, and whether you can make confident decisions with incomplete information. The most common failure mode at this level is over-engineering — producing a complex design when a simpler one would have been correct. Staff engineers are also evaluated on how they handle ambiguity and how they'd bring a junior engineer along in the design process.</p>
+
+        <div class="callout">
+          <p><strong>Practical tip:</strong> When you sit down for a system design interview, state the seniority level you're targeting early. It helps calibrate the interviewer's expectations and signals that you understand the level you're applying for.</p>
+        </div>
+      </section>
+
+      <section id="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <h3>How long should a system design interview be?</h3>
+        <p>Most system design interviews run 45–60 minutes. A good time allocation: 5–10 minutes on requirements gathering, 20–25 minutes on your initial design, and the remainder on deep dives and trade-off discussion. If you find yourself still in requirements gathering at the 20-minute mark, you're running over — start designing and revisit assumptions as you go.</p>
+
+        <h3>How many practice sessions do I need before my interview?</h3>
+        <p>Aim for at least 10–15 end-to-end practice sessions — not reading, but actively working through a question from scratch with a timer. The specific number matters less than the quality and structure of each session. One hour of focused practice with feedback on a specific dimension is worth five hours of reading.</p>
+
+        <h3>Should I use a specific notation for my architecture diagrams?</h3>
+        <p>No formal notation is required. Use simple labeled boxes and arrows. What matters is that the diagram is legible and that you can narrate what each component does and why it's there. Elaborate diagram conventions (UML, C4) won't help you — clear thinking and clear communication will.</p>
+
+        <h3>What are the most common topics covered in system design interviews?</h3>
+        <p>The patterns that appear most frequently: URL shorteners, notification services, social media feeds, real-time chat, video streaming, rate limiters, search systems, and payment processing. Mastering the concepts underlying these (caching, message queues, database selection, CAP theorem, sharding) puts you in a strong position for most scenarios you'll encounter.</p>
+
+        <h3>What is the difference between HLD and LLD interviews?</h3>
+        <p>High-Level Design (HLD) interviews focus on system architecture: components, services, databases, APIs, and their interactions. Low-Level Design (LLD) interviews focus on object-oriented design: class hierarchies, design patterns, and data structures. Most software engineering interviews at product companies are HLD. LLD appears more frequently at services companies and in some companies' junior-level tracks.</p>
+      </section>
+
+      <div class="article-cta-box" style="margin-top:56px">
+        <strong>Ready to practice?</strong>
+        <p>ArchWyse's ARIA conducts full AI-powered system design mock interviews — voice-based, with adaptive follow-up questions, whiteboard support, and feedback across all 6 evaluation dimensions. Create a free account and start your first session in minutes.</p>
+        <a href="https://archwyse.com/engineers" target="_blank" rel="noopener" class="btn">Start practicing free →</a>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="../index.html" class="footer-logo">
+          <img src="../favicon.png" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;">
+          ArchWyse
+        </a>
+        <p class="footer-desc">AI-proctored system design assessments for engineering hiring teams. Structured results without the interviewer overhead.</p>
+      </div>
+      <div class="footer-col">
+        <h4>For Organizations</h4>
+        <ul>
+          <li><a href="../index.html#features">Features</a></li>
+          <li><a href="../index.html#process">How It Works</a></li>
+          <li><a href="../index.html#pricing">Pricing</a></li>
+          <li><a href="../index.html#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="../engineers.html">For Engineers</a></li>
+          <li><a href="index.html">Blog</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="../privacy.html">Privacy Policy</a></li>
+          <li><a href="../terms.html">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ArchWyse. Built for engineers who think in systems.</p>
+      <div class="footer-status">
+        <span class="status-dot"></span>
+        All systems operational
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 10); }, { passive: true });
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => { menu.classList.toggle('open'); });
+  menu?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../favicon.png" type="image/png" />
+  <title>How to Write System Design Interview Questions That Test Engineering Judgment — ArchWyse</title>
+  <meta name="description" content="A guide for hiring managers on writing system design interview questions that produce high signal — 5 traits of a well-crafted question, 4 mistakes to avoid, and real good vs. bad examples." />
+  <meta name="keywords" content="how to write system design interview questions, system design interview question examples, technical interview question design, engineering interview questions, hiring system design" />
+  <meta name="author" content="ArchWyse" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://archwyse.com/blog/how-to-write-system-design-interview-questions" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://archwyse.com/blog/how-to-write-system-design-interview-questions" />
+  <meta property="og:title" content="How to Write System Design Interview Questions That Test Engineering Judgment — ArchWyse" />
+  <meta property="og:description" content="5 traits of a well-crafted system design question, 4 mistakes to avoid, and real good vs. bad examples." />
+  <meta property="og:image" content="https://archwyse.com/og-image.png" />
+  <meta property="og:site_name" content="ArchWyse" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How to Write System Design Interview Questions That Test Engineering Judgment" />
+  <meta name="twitter:description" content="5 traits, 4 mistakes, and real examples — for hiring managers who want better signal." />
+  <meta name="twitter:image" content="https://archwyse.com/og-image.png" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://archwyse.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://archwyse.com/blog/"},{"@type":"ListItem","position":3,"name":"How to Write System Design Interview Questions","item":"https://archwyse.com/blog/how-to-write-system-design-interview-questions"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"How to Write a System Design Interview Question That Actually Tests Engineering Judgment","description":"A guide for engineering managers and hiring teams on writing system design interview questions that produce high-signal evaluations.","image":"https://archwyse.com/og-image.png","author":{"@type":"Organization","name":"ArchWyse","url":"https://archwyse.com"},"publisher":{"@type":"Organization","name":"ArchWyse","logo":{"@type":"ImageObject","url":"https://archwyse.com/favicon.png"}},"datePublished":"2026-06-23","dateModified":"2026-06-23","mainEntityOfPage":{"@type":"WebPage","@id":"https://archwyse.com/blog/how-to-write-system-design-interview-questions"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should you use the same system design question for every candidate?","acceptedAnswer":{"@type":"Answer","text":"Yes, for a given role level. Consistency is critical for comparability. If different candidates answer different questions, you cannot calibrate scores across candidates or identify patterns in your hiring bar. Use a small set of questions per level and rotate periodically."}},{"@type":"Question","name":"How often should you change your system design interview questions?","acceptedAnswer":{"@type":"Answer","text":"Rotate questions every 6 to 12 months, or when you suspect a question has leaked to candidate prep communities. Changing too frequently hurts calibration; keeping questions too long risks candidates arriving with memorized answers."}},{"@type":"Question","name":"How do you test for seniority differences with the same question?","acceptedAnswer":{"@type":"Answer","text":"The question stays the same — the rubric changes. A senior engineer is expected to proactively identify failure modes a junior wouldn't know to look for. Define in advance what a Strong Hire response looks like at each level, then evaluate against that."}},{"@type":"Question","name":"Can you use well-known questions like 'Design Twitter'?","acceptedAnswer":{"@type":"Answer","text":"At junior and mid-levels, canonical questions are fine — candidates are unlikely to have memorized full answers. For senior and staff roles, canonical questions are a problem because strong candidates will often arrive with a rehearsed response. Use a variant or a less-famous problem at senior levels."}}]}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#F7F4EF;--surface:#FFFFFF;--border:rgba(74,78,74,0.12);--border-h:rgba(74,124,89,0.38);--text:#1A1A1A;--muted:#6B6358;--dim:#9A9490;--primary:#4A7C59;--primary-dk:#3a6347;--primary-bg:rgba(74,124,89,0.08);--amber:#C4A66A;--amber-bg:rgba(196,166,106,0.1);--neutral:#4A4E4A;--r:12px;--r-sm:8px;--max-w:1120px}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+    .container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+    h1,h2,h3,h4{font-family:'Sora',system-ui,sans-serif}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r-sm);font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s ease;border:none;font-family:'Inter',sans-serif;line-height:1;white-space:nowrap}
+    .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dk);transform:translateY(-1px);box-shadow:0 8px 28px rgba(74,124,89,.28)}
+    .btn-ghost{background:transparent;color:var(--neutral);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--border-h);color:var(--primary);background:var(--primary-bg)}
+    nav#navbar{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent}
+    nav#navbar.scrolled{background:rgba(247,244,239,.93);backdrop-filter:blur(18px);border-bottom-color:var(--border);box-shadow:0 1px 20px rgba(74,78,74,.07)}
+    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+    .nav-links a{font-size:14px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}.nav-links a:hover{color:var(--text)}
+    .nav-actions{display:flex;align-items:center;gap:10px}
+    .nav-menu-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;line-height:0}
+    .mobile-menu{display:none;position:fixed;inset:0;top:65px;background:rgba(247,244,239,.97);backdrop-filter:blur(16px);z-index:99;padding:32px 24px;flex-direction:column;gap:4px;border-top:1px solid var(--border)}
+    .mobile-menu.open{display:flex}.mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border)}.mobile-menu .btn{margin-top:20px;justify-content:center}.mobile-menu .btn-primary{color:#fff}
+    .breadcrumb-bar{padding:16px 0;border-bottom:1px solid var(--border);background:var(--surface);margin-top:65px}
+    .breadcrumb{list-style:none;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .breadcrumb li{font-size:13px;color:var(--dim)}.breadcrumb li:not(:last-child)::after{content:'/';margin-left:6px;color:var(--dim)}
+    .breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s}.breadcrumb a:hover{color:var(--primary)}
+    .article-header{padding:56px 0 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .article-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+    .article-tag{background:var(--primary-bg);color:var(--primary);border:1px solid rgba(74,124,89,.22);font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+    .article-date,.article-read{font-size:13px;color:var(--dim)}
+    .article-header h1{font-size:clamp(28px,4vw,52px);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:20px;max-width:820px}
+    .article-lead{font-size:18px;color:var(--muted);line-height:1.75;max-width:680px}
+    .article-layout{padding:64px 0 96px}
+    .article-body{max-width:740px}
+    .article-body h2{font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.03em;margin:52px 0 14px;line-height:1.2}
+    .article-body h2:first-of-type{margin-top:0}
+    .article-body h3{font-size:18px;font-weight:700;letter-spacing:-.02em;margin:28px 0 10px}
+    .article-body p{font-size:16px;color:var(--text);line-height:1.85;margin-bottom:16px}
+    .article-body ul,.article-body ol{padding-left:24px;margin-bottom:20px}
+    .article-body li{font-size:16px;color:var(--text);line-height:1.8;margin-bottom:8px}
+    .article-body strong{font-weight:600}
+    .article-body a{color:var(--primary);text-decoration:underline;text-decoration-color:rgba(74,124,89,.35);text-underline-offset:3px}
+    .article-body a:hover{text-decoration-color:var(--primary)}
+    .toc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px 28px;margin-bottom:48px}
+    .toc-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+    .toc ol{padding-left:20px;margin:0}.toc li{font-size:14px;margin-bottom:8px;color:var(--muted)}
+    .toc a{color:var(--muted);text-decoration:none;transition:color .2s}.toc a:hover{color:var(--primary)}
+    .callout{background:var(--amber-bg);border:1px solid rgba(196,166,106,.35);border-radius:var(--r-sm);padding:18px 22px;margin:24px 0}
+    .callout p{font-size:15px;color:var(--text);margin:0;line-height:1.7}
+    .article-cta-box{background:var(--primary);border-radius:var(--r);padding:36px;margin:48px 0}
+    .article-cta-box strong{display:block;font-family:'Sora',sans-serif;font-size:20px;font-weight:700;color:white;margin-bottom:10px}
+    .article-cta-box p{font-size:15px;color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:22px}
+    .article-cta-box .btn{background:white;color:var(--primary)}.article-cta-box .btn:hover{background:rgba(255,255,255,.92);transform:translateY(-1px)}
+    .trait-item{border-left:3px solid var(--primary);padding:18px 20px;background:var(--surface);border-radius:0 var(--r-sm) var(--r-sm) 0;margin-bottom:14px;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .trait-item h3{margin-top:0;margin-bottom:8px;font-size:16px}.trait-item p{margin:0;font-size:15px;color:var(--muted)}
+    .example-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0 28px}
+    .example-bad,.example-good{border-radius:var(--r-sm);padding:20px;border:1px solid var(--border)}
+    .example-bad{background:#fff5f5;border-color:rgba(220,38,38,.2)}
+    .example-good{background:var(--primary-bg);border-color:rgba(74,124,89,.25)}
+    .example-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .example-bad .example-label{color:#dc2626}.example-good .example-label{color:var(--primary)}
+    .example-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.5}
+    .example-why{font-size:13px;color:var(--muted);line-height:1.6}
+    .rubric-table{width:100%;border-collapse:collapse;margin:20px 0 28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+    .rubric-table th{background:var(--bg);font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+    .rubric-table td{padding:14px 16px;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:top;line-height:1.6}
+    .rubric-table tr:last-child td{border-bottom:none}
+    .rubric-table td:first-child{font-weight:600;white-space:nowrap;color:var(--primary)}
+    footer{background:var(--neutral);color:rgba(255,255,255,.8);padding:56px 0 28px}
+    .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+    .footer-logo{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:white;text-decoration:none;margin-bottom:12px}
+    .footer-desc{font-size:14px;color:rgba(255,255,255,.4);line-height:1.65;max-width:240px}
+    .footer-col h4{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);margin-bottom:14px;letter-spacing:.1em;text-transform:uppercase}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .footer-col a{font-size:14px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s}.footer-col a:hover{color:white}
+    .footer-bottom{padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .footer-bottom p{font-size:13px;color:rgba(255,255,255,.3)}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+    .footer-status{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--amber)}
+    .status-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+    @media(max-width:960px){.nav-links{display:none}.nav-menu-btn{display:block}.nav-actions .btn-ghost{display:none}.example-pair{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:span 2}}
+    @media(max-width:580px){.container{padding:0 16px}.article-header{padding:40px 0 36px}.article-layout{padding:40px 0 64px}.article-cta-box{padding:28px 24px}.footer-grid{grid-template-columns:1fr}.footer-grid>div:first-child{grid-column:span 1}}
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <img src="../favicon.png" alt="" style="width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;">
+      ArchWyse
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html#process">How It Works</a></li>
+      <li><a href="../index.html#features">Features</a></li>
+      <li><a href="../index.html#pricing">Pricing</a></li>
+      <li><a href="index.html" style="color:var(--primary);font-weight:600;">Blog</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="../engineers.html" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Engineers</a>
+      <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:8px 18px;font-size:14px;">Get started free →</a>
+      <button class="nav-menu-btn" id="menu-toggle" aria-label="Toggle menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="../index.html#process">How It Works</a>
+  <a href="../index.html#features">Features</a>
+  <a href="../index.html#pricing">Pricing</a>
+  <a href="index.html">Blog</a>
+  <a href="../engineers.html">For Engineers</a>
+  <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Get started free →</a>
+</div>
+
+<nav aria-label="Breadcrumb" class="breadcrumb-bar">
+  <div class="container">
+    <ol class="breadcrumb">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="index.html">Blog</a></li>
+      <li aria-current="page">How to Write System Design Interview Questions</li>
+    </ol>
+  </div>
+</nav>
+
+<header class="article-header">
+  <div class="container">
+    <div class="article-meta">
+      <span class="article-tag">Hiring</span>
+      <span class="article-date">June 23, 2026</span>
+      <span class="article-read">· 10 min read</span>
+    </div>
+    <h1>How to Write a System Design Interview Question That Actually Tests Engineering Judgment</h1>
+    <p class="article-lead">Most system design questions are borrowed from the internet without thinking through what they're measuring. This guide is for engineering managers and hiring teams who want questions that produce real signal — not practiced answers.</p>
+  </div>
+</header>
+
+<main>
+  <div class="article-layout container">
+    <article class="article-body">
+
+      <nav class="toc" aria-label="Table of contents">
+        <div class="toc-label">In this guide</div>
+        <ol>
+          <li><a href="#what-its-testing">What a system design interview is actually measuring</a></li>
+          <li><a href="#five-traits">5 traits of a well-crafted question</a></li>
+          <li><a href="#mistakes">4 mistakes that undermine your question</a></li>
+          <li><a href="#examples">Good vs. bad question examples</a></li>
+          <li><a href="#seniority">How seniority changes the rubric</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ol>
+      </nav>
+
+      <p>The majority of system design interview questions used by engineering teams fall into one of three traps: they're too vague to produce consistent evaluation, too specific to reveal anything beyond domain familiarity, or famous enough that a prepared candidate can walk in with a memorized answer.</p>
+      <p>None of these problems are the candidate's fault. They're a consequence of how the question was written — or, more often, not written at all, but grabbed from a blog post.</p>
+      <p>If you're responsible for hiring and your system design round isn't generating the signal you need, the most productive place to look is the question itself.</p>
+
+      <section id="what-its-testing">
+        <h2>What a System Design Interview Is Actually Measuring</h2>
+        <p>Before you can write a good question, you need to be precise about what you're evaluating. System design interviews are not testing whether a candidate knows a set of facts. They're evaluating five distinct things:</p>
+        <ul>
+          <li><strong>Requirements elicitation</strong> — Does the candidate ask the right clarifying questions before designing?</li>
+          <li><strong>Systems thinking</strong> — Can they identify the components a system needs and reason about how they interact?</li>
+          <li><strong>Trade-off reasoning</strong> — Do they understand that every design decision involves a choice between competing constraints?</li>
+          <li><strong>Communication under pressure</strong> — Can they narrate their thinking clearly while actively solving a problem?</li>
+          <li><strong>Depth at the relevant level</strong> — Do they know the hard parts of the problem for the seniority they're interviewing for?</li>
+        </ul>
+        <p>A well-written question creates space for all five. A poorly-written question may only exercise one or two — often the easiest one.</p>
+      </section>
+
+      <section id="five-traits">
+        <h2>5 Traits of a Well-Crafted System Design Question</h2>
+
+        <div class="trait-item">
+          <h3>1. Bounded scope, expandable depth</h3>
+          <p>The question should have a clear enough scope that a candidate can produce an initial design in 20–25 minutes, but enough complexity that going deeper reveals engineering judgment. "Design a notification delivery service for a SaaS product" is bounded. "Design an entire platform like Salesforce" is not. The best questions have one primary surface and 2–3 clear areas where depth can be added: reliability guarantees, fan-out strategies, delivery tracking.</p>
+        </div>
+
+        <div class="trait-item">
+          <h3>2. At least two genuinely hard sub-problems</h3>
+          <p>If the hardest part of your question can be answered with "add a cache in front of the database," the question is too easy. A good question has moments where even experienced engineers have to think — where multiple valid approaches exist and choosing between them requires real reasoning. Notification delivery has one: guaranteed at-least-once delivery across failure modes. A leaderboard has one: real-time rank updates at millions of writes per second.</p>
+        </div>
+
+        <div class="trait-item">
+          <h3>3. No single right answer</h3>
+          <p>If you've already decided that the correct database is PostgreSQL and a candidate choosing Cassandra is wrong, you're not running a design interview — you're running a guessing game. Good questions have multiple valid design paths with different trade-offs. The correct answer is a coherent design with clearly-reasoned decisions, not the specific technology choices you would have made.</p>
+        </div>
+
+        <div class="trait-item">
+          <h3>4. Maps to real constraints your company cares about</h3>
+          <p>If your product processes financial transactions, a question about payment processing will give you more relevant signal than a question about a video streaming service. If your company's challenge is read-heavy global distribution, that's what the question should probe. Authentic questions also help candidates self-select — a senior engineer who loves distributed systems will engage very differently than one who doesn't.</p>
+        </div>
+
+        <div class="trait-item">
+          <h3>5. Portable across seniority with rubric adjustments</h3>
+          <p>The best questions can be used for engineers across multiple levels — what changes is the scoring rubric, not the question. A junior engineer who produces a coherent three-tier architecture passes. A senior engineer who fails to proactively identify failure modes and propose mitigations doesn't, even if their architecture is correct. Using the same question across levels also makes calibration discussions easier.</p>
+        </div>
+      </section>
+
+      <section id="mistakes">
+        <h2>4 Mistakes That Undermine Your Question</h2>
+
+        <h3>Mistake 1: Using a question that's been leaked to prep communities</h3>
+        <p>Any question that appears in a "top 50 system design interview questions" article has been rehearsed by a significant fraction of your candidate pool. For senior and staff roles especially, using "Design Twitter" or "Design Uber" means you're testing preparation, not engineering judgment. A candidate who has memorized a feed fan-out architecture will outperform a better engineer who hasn't seen the question before.</p>
+        <p>The fix: Take a canonical problem and add a real constraint. "Design a social media feed — but the requirement is that users in regions with poor connectivity must still see posts within 5 seconds, even offline." Now preparation doesn't help.</p>
+
+        <h3>Mistake 2: Questions too narrow to reveal trade-off thinking</h3>
+        <p>"Design a REST API for a user profile service" has one design and no interesting trade-offs. The candidate will produce a correct answer in ten minutes and then have nothing to discuss for the remaining fifty. Narrow questions disadvantage experienced engineers — they have less room to demonstrate depth — while making it easy for junior engineers to look senior.</p>
+
+        <h3>Mistake 3: Questions that require familiarity with specific technology</h3>
+        <p>A question that only makes sense if you know Kafka, or whose "correct" answer assumes DynamoDB, is testing tool familiarity rather than engineering judgment. A candidate who's built high-throughput streaming systems using a different stack will be penalized. Your question should reward thinking, not technology brand recognition.</p>
+
+        <h3>Mistake 4: No defined rubric before the interview starts</h3>
+        <p>If you're deciding how to score a candidate's response after you've heard it, you're introducing the very bias you're trying to avoid. Before every interview, write down: what does a Hire response look like? What does a Strong Hire look like? What's a disqualifying weakness? Having this written down before the candidate starts forces you to define success criteria that don't shift based on who's in the room.</p>
+      </section>
+
+      <div class="article-cta-box">
+        <strong>Let AI run the interview so you can focus on the rubric</strong>
+        <p>ArchWyse lets you write a custom question with your own prompt, seniority level, and system context. ARIA conducts the session, scores across 6 dimensions, and delivers a structured report — so your team's time goes into evaluating results, not running sessions.</p>
+        <a href="https://archwyse.com" target="_blank" rel="noopener" class="btn">See how ArchWyse works →</a>
+      </div>
+
+      <section id="examples">
+        <h2>Good vs. Bad Question Examples</h2>
+        <p>The difference between a high-signal and low-signal question often comes down to three things: scope, authentic trade-offs, and whether there's a "hard part" that reveals senior-level thinking.</p>
+
+        <div class="example-pair">
+          <div class="example-bad">
+            <div class="example-label">❌ Low Signal</div>
+            <div class="example-q">"Design a REST API for a blogging platform."</div>
+            <div class="example-why">Too narrow. One correct answer. No interesting scaling problem. No trade-offs. A junior engineer can answer this fully. A senior engineer has nothing to demonstrate depth on.</div>
+          </div>
+          <div class="example-good">
+            <div class="example-label">✓ High Signal</div>
+            <div class="example-q">"Design the backend for a job board where companies post listings and candidates search. Traffic spikes 10× during layoff seasons. Focus on search relevance and how you'd handle hot listings."</div>
+            <div class="example-why">Bounded scope. Real scaling constraint. Multiple valid approaches for search (Elasticsearch vs. Postgres full-text). Authentically hard sub-problem: hot listing handling and search ranking under load.</div>
+          </div>
+        </div>
+
+        <div class="example-pair">
+          <div class="example-bad">
+            <div class="example-label">❌ Low Signal</div>
+            <div class="example-q">"Design Twitter."</div>
+            <div class="example-why">Too famous. Most prepared candidates have a memorized answer. Too broad to produce focused signal. No specified constraint to probe trade-off thinking.</div>
+          </div>
+          <div class="example-good">
+            <div class="example-label">✓ High Signal</div>
+            <div class="example-q">"Design the timeline feed for a social platform with 50M users, where 5% of accounts have over 100K followers. Focus on feed delivery latency and consistency trade-offs."</div>
+            <div class="example-why">Same domain, but forces engagement with the celebrity problem — a genuinely hard fan-out challenge — rather than letting the candidate recite a generic feed architecture.</div>
+          </div>
+        </div>
+
+        <div class="example-pair">
+          <div class="example-bad">
+            <div class="example-label">❌ Low Signal</div>
+            <div class="example-q">"How would you design a system using Kafka and DynamoDB?"</div>
+            <div class="example-why">Tests tool familiarity, not reasoning. Engineers who don't know Kafka are penalized regardless of their underlying understanding of event streaming. The question answers itself.</div>
+          </div>
+          <div class="example-good">
+            <div class="example-label">✓ High Signal</div>
+            <div class="example-q">"Design a real-time order tracking system for an e-commerce platform that processes 50K orders/hour. The system must update delivery status within 30 seconds of a status change from any carrier."</div>
+            <div class="example-why">Specifies the constraint (latency SLA) without specifying the technology. Strong candidates will naturally arrive at event streaming or polling — but they'll need to justify the choice.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="seniority">
+        <h2>How Seniority Changes the Rubric (Not the Question)</h2>
+        <p>The same question asked of a mid-level engineer and a staff engineer should produce very different evaluations. The question doesn't change — the rubric does. Here's what a well-calibrated rubric looks like across levels for any of the questions above:</p>
+
+        <table class="rubric-table">
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th>What Hire looks like</th>
+              <th>What Strong Hire looks like</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mid (L4)</td>
+              <td>Coherent architecture covering main components; correct database and API choices with basic justification</td>
+              <td>Identifies at least one non-obvious scaling challenge and proposes a concrete mitigation</td>
+            </tr>
+            <tr>
+              <td>Senior (L5)</td>
+              <td>Proactively identifies failure modes; proposes concrete solutions for the question's hard sub-problem; defends trade-offs with reasoning</td>
+              <td>Drives the conversation; catches ambiguity before drawing; suggests simpler alternatives to their own design when appropriate</td>
+            </tr>
+            <tr>
+              <td>Staff (L6)</td>
+              <td>Questions whether the stated problem is the right problem; simplifies scope before solving; identifies what actually needs to scale vs. what doesn't</td>
+              <td>Produces a design simpler than the interviewer expected; explains why the obvious complexity is unnecessary given the actual constraints</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>If you don't have this rubric written down before the interview starts, write it now. It's the most high-leverage thing you can do to improve your hiring consistency.</p>
+      </section>
+
+      <section id="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <h3>Should you use the same question for every candidate at a given level?</h3>
+        <p>Yes. Consistency is essential for comparing candidates and identifying patterns in your hiring bar over time. If different candidates answer different questions, you lose the ability to say "the last 10 engineers we hired at this level all demonstrated X." Use a small set of questions per level and rotate every 6–12 months.</p>
+
+        <h3>How often should you change your system design interview questions?</h3>
+        <p>Rotate every 6–12 months, or when you have reason to believe a question has leaked to candidate prep communities (you'll know — answers start arriving pre-packaged). Changing too frequently hurts calibration; keeping questions too long risks rewarding preparation over judgment.</p>
+
+        <h3>Can you use well-known questions like "Design Twitter" at all?</h3>
+        <p>At junior and mid-levels, canonical questions are fine — candidates at those levels are unlikely to have rehearsed a complete answer. For senior and staff roles, use variants with added constraints, or choose less-famous problems that probe the same underlying concepts.</p>
+
+        <h3>How do you evaluate candidates on the same question but different seniority levels?</h3>
+        <p>Define your rubric for each level before the interview, not after. A mid-level engineer producing a correct L5 response should be noted and discussed. An L5 producing an L4 response should not pass — even if the design is technically correct.</p>
+      </section>
+
+      <div class="article-cta-box" style="margin-top:56px">
+        <strong>Stop running the interview. Start reviewing results.</strong>
+        <p>ArchWyse lets you define your question and your seniority level once. ARIA handles the session for every candidate — consistently, without interviewer variability. Your team sees a structured report, not a calendar block.</p>
+        <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn">Get started free →</a>
+      </div>
+
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="../index.html" class="footer-logo"><img src="../favicon.png" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;"> ArchWyse</a>
+        <p class="footer-desc">AI-proctored system design assessments for engineering hiring teams. Structured results without the interviewer overhead.</p>
+      </div>
+      <div class="footer-col"><h4>For Organizations</h4><ul><li><a href="../index.html#features">Features</a></li><li><a href="../index.html#process">How It Works</a></li><li><a href="../index.html#pricing">Pricing</a></li><li><a href="../index.html#faq">FAQ</a></li></ul></div>
+      <div class="footer-col"><h4>Product</h4><ul><li><a href="../engineers.html">For Engineers</a></li><li><a href="index.html">Blog</a></li><li><a href="../index.html#contact">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Legal</h4><ul><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../terms.html">Terms of Service</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 ArchWyse. Built for engineers who think in systems.</p>
+      <div class="footer-status"><span class="status-dot"></span>All systems operational</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav=document.getElementById('navbar');
+  window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>10)},{passive:true});
+  const toggle=document.getElementById('menu-toggle'),menu=document.getElementById('mobile-menu');
+  toggle?.addEventListener('click',()=>menu.classList.toggle('open'));
+  menu?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('open')));
+</script>
+</body>
+</html>

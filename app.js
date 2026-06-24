@@ -87,7 +87,7 @@ form.addEventListener('submit', async e => {
   };
 
   try {
-    const res = await fetch('http://app.archwyse.com/api/contact', {
+    const res = await fetch('https://app.archwyse.com/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

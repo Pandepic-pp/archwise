@@ -82,10 +82,12 @@ form.addEventListener('submit', async e => {
     email:   form.querySelector('#email').value.trim(),
     subject: form.querySelector('#topic').value || 'General inquiry',
     message: form.querySelector('#message').value.trim(),
+    company: form.querySelector('#company').value.trim(),
+    companySize: form.querySelector('#size').value.trim()
   };
 
   try {
-    const res = await fetch('https://app.archwyse.com/api/contact', {
+    const res = await fetch('http://app.archwyse.com/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

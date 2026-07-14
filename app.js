@@ -1,4 +1,4 @@
-/* ArchWyse — no external dependencies */
+/* ArchWyse: no external dependencies */
 
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');

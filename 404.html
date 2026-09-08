@@ -3,6 +3,11 @@
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWQ7Z2LHRV"></script>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7595131862677740" crossorigin="anonymous"></script>
+  <!-- Google Funding Choices: EU/UK consent message for AdSense -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-7595131862677740?ers=1"></script>
+  <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -19,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+  <link rel="stylesheet" href="/nav.css" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -31,15 +37,7 @@
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
     h1,h2{font-family:'Sora',system-ui,sans-serif}
 
-    .site-nav{position:sticky;top:0;z-index:100;background:rgba(247,244,239,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
-    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
-    .nav-logo{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
-    .nav-logo-icon{width:28px;height:28px;background:var(--primary);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white}
-    .nav-links-right{display:flex;align-items:center;gap:20px}
-    .nav-links-right a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
-    .nav-links-right a:hover{color:var(--text)}
-
-    main{flex:1;max-width:var(--max-w);margin:0 auto;padding:80px 24px;display:flex;flex-direction:column;align-items:center;text-align:center}
+    main{flex:1;max-width:var(--max-w);margin:0 auto;padding:80px 24px;margin-top:65px;display:flex;flex-direction:column;align-items:center;text-align:center}
     .error-code{font-family:'Sora',sans-serif;font-size:clamp(64px,14vw,120px);font-weight:800;letter-spacing:-.04em;line-height:1;background:linear-gradient(135deg,#4A7C59 0%,#C4A66A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
     main h1{font-size:clamp(22px,3.4vw,30px);font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
     main p{font-size:15px;color:var(--muted);line-height:1.75;max-width:440px;margin-bottom:36px}
@@ -70,19 +68,48 @@
 </head>
 <body>
 
-<nav class="site-nav">
+<nav id="navbar">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <div class="nav-logo-icon">A</div>
+      <img src="/favicon.png" alt="ArchWyse logo">
       ArchWyse
     </a>
-    <div class="nav-links-right">
-      <a href="/engineers">For Engineers</a>
-      <a href="/blog/">Blog</a>
-      <a href="/careers/">Careers</a>
+    <ul class="nav-links">
+      <li><a href="/#process">How It Works</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          Pricing
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="/#pricing"><strong>For Teams</strong><span>Hiring &amp; assessments</span></a>
+          <a href="/engineers#pricing"><strong>For Engineers</strong><span>Interview practice</span></a>
+        </div>
+      </li>
+      <li><a href="/blog/">Blog</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="/engineers" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Engineers</a>
+      <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary" style="padding:8px 18px;font-size:14px;">Get started free →</a>
+      <button class="nav-menu-btn" id="menu-toggle" aria-label="Toggle menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
   </div>
 </nav>
+<div class="mobile-menu" id="mobile-menu" role="navigation">
+  <a href="/#process">How It Works</a>
+  <a href="/#features">Features</a>
+  <div class="mobile-menu-group">
+    <span class="mobile-menu-group-label">Pricing</span>
+    <a href="/#pricing">For Teams</a>
+    <a href="/engineers#pricing">For Engineers</a>
+  </div>
+  <a href="/blog/">Blog</a>
+  <a href="/engineers">For Engineers</a>
+  <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Get started free →</a>
+</div>
 
 <main>
   <div class="error-code">404</div>
@@ -109,6 +136,8 @@
     <p>© 2026 ArchWyse. Built for engineers who think in systems.</p>
   </div>
 </footer>
+
+<script defer src="/nav.js"></script>
 
 </body>
 </html>

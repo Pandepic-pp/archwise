@@ -1,33 +1,4 @@
-/* ArchWyse: no external dependencies */
-
-// Navbar scroll effect
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 20);
-}, { passive: true });
-
-// Mobile menu
-const menuToggle  = document.getElementById('menu-toggle');
-const mobileMenu  = document.getElementById('mobile-menu');
-
-menuToggle.addEventListener('click', () => {
-  const isOpen = mobileMenu.classList.toggle('open');
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-});
-
-document.querySelectorAll('.mob-link').forEach(link => {
-  link.addEventListener('click', () => {
-    mobileMenu.classList.remove('open');
-    document.body.style.overflow = '';
-  });
-});
-
-document.addEventListener('click', e => {
-  if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-    mobileMenu.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-});
+/* ArchWyse: no external dependencies. Navbar behavior lives in /nav.js. */
 
 // Scroll reveal via IntersectionObserver
 const observer = new IntersectionObserver((entries) => {
@@ -82,8 +53,8 @@ form.addEventListener('submit', async e => {
     email:   form.querySelector('#email').value.trim(),
     subject: form.querySelector('#topic').value || 'General inquiry',
     message: form.querySelector('#message').value.trim(),
-    company: form.querySelector('#company').value.trim(),
-    companySize: form.querySelector('#size').value.trim()
+    company: form.querySelector('#company')?.value.trim() || '',
+    companySize: form.querySelector('#size')?.value.trim() || ''
   };
 
   try {

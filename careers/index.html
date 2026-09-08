@@ -3,6 +3,11 @@
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWQ7Z2LHRV"></script>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7595131862677740" crossorigin="anonymous"></script>
+  <!-- Google Funding Choices: EU/UK consent message for AdSense -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-7595131862677740?ers=1"></script>
+  <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -36,6 +41,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+  <link rel="stylesheet" href="/nav.css" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--bg:#F7F4EF;--surface:#FFFFFF;--border:rgba(74,78,74,0.12);--border-h:rgba(74,124,89,0.38);--text:#1A1A1A;--muted:#6B6358;--dim:#9A9490;--primary:#4A7C59;--primary-dk:#3a6347;--primary-bg:rgba(74,124,89,0.08);--amber:#C4A66A;--amber-bg:rgba(196,166,106,0.1);--neutral:#4A4E4A;--r:12px;--r-sm:8px;--max-w:1120px}
@@ -47,16 +53,6 @@
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:var(--r-sm);font-size:15px;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s ease;border:none;font-family:'Inter',sans-serif;line-height:1;white-space:nowrap}
     .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dk);transform:translateY(-1px);box-shadow:0 8px 28px rgba(74,124,89,.28)}
     .btn-ghost{background:transparent;color:var(--neutral);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--border-h);color:var(--primary);background:var(--primary-bg)}
-    nav#navbar{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent}
-    nav#navbar.scrolled{background:rgba(247,244,239,.93);backdrop-filter:blur(18px);border-bottom-color:var(--border);box-shadow:0 1px 20px rgba(74,78,74,.07)}
-    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
-    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
-    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
-    .nav-links a{font-size:14px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}.nav-links a:hover{color:var(--text)}
-    .nav-actions{display:flex;align-items:center;gap:10px}
-    .nav-menu-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;line-height:0}
-    .mobile-menu{display:none;position:fixed;inset:0;top:65px;background:rgba(247,244,239,.97);backdrop-filter:blur(16px);z-index:99;padding:32px 24px;flex-direction:column;gap:4px;border-top:1px solid var(--border)}
-    .mobile-menu.open{display:flex}.mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border)}.mobile-menu .btn{margin-top:20px;justify-content:center}.mobile-menu .btn-primary{color:#fff}
     .page-header{padding:80px 0 56px;margin-top:65px;border-bottom:1px solid var(--border);background:var(--surface)}
     .page-header h1{font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-.04em;margin-bottom:12px;line-height:1.1}
     .page-header p{font-size:17px;color:var(--muted);max-width:520px;line-height:1.7}
@@ -69,6 +65,7 @@
     .job-card-main h2{font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:8px}
     .job-card-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .job-tag{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);background:var(--primary-bg);border:1px solid rgba(74,124,89,.2);padding:3px 10px;border-radius:20px}
+    .job-tag-closed{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#a83232;background:rgba(200,60,60,.08);border:1px solid rgba(200,60,60,.25);padding:3px 10px;border-radius:20px}
     .job-meta-item{font-size:13px;color:var(--dim)}
     .job-card-arrow{color:var(--primary);font-size:20px;flex-shrink:0;transition:transform .2s;line-height:1}
     .job-card:hover .job-card-arrow{transform:translateX(4px)}
@@ -85,7 +82,7 @@
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
     .footer-status{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--amber)}
     .status-dot{width:6px;height:6px;background:var(--amber);border-radius:50%;animation:pulse 2s ease-in-out infinite}
-    @media(max-width:960px){.nav-links{display:none}.nav-menu-btn{display:block}.nav-actions .btn-ghost{display:none}.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:span 2}}
+    @media(max-width:960px){.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>div:first-child{grid-column:span 2}}
     @media(max-width:580px){.container{padding:0 16px}.job-card{flex-direction:column;align-items:flex-start;gap:14px;padding:24px}.footer-grid{grid-template-columns:1fr}.footer-grid>div:first-child{grid-column:span 1}}
   </style>
 </head>
@@ -94,15 +91,23 @@
 <nav id="navbar">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <img src="../favicon.png" alt="ArchWyse logo" style="width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;">
+      <img src="/favicon.png" alt="ArchWyse logo">
       ArchWyse
     </a>
     <ul class="nav-links">
       <li><a href="/#process">How It Works</a></li>
       <li><a href="/#features">Features</a></li>
-      <li><a href="/#pricing">Pricing</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          Pricing
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="/#pricing"><strong>For Teams</strong><span>Hiring &amp; assessments</span></a>
+          <a href="/engineers#pricing"><strong>For Engineers</strong><span>Interview practice</span></a>
+        </div>
+      </li>
       <li><a href="/blog/">Blog</a></li>
-      <li><a href="/careers/" style="color:var(--primary);font-weight:600;">Careers</a></li>
     </ul>
     <div class="nav-actions">
       <a href="/engineers" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Engineers</a>
@@ -113,8 +118,16 @@
     </div>
   </div>
 </nav>
-<div class="mobile-menu" id="mobile-menu">
-  <a href="/#process">How It Works</a><a href="/#features">Features</a><a href="/#pricing">Pricing</a><a href="/blog/">Blog</a><a href="/careers/">Careers</a><a href="/engineers">For Engineers</a>
+<div class="mobile-menu" id="mobile-menu" role="navigation">
+  <a href="/#process">How It Works</a>
+  <a href="/#features">Features</a>
+  <div class="mobile-menu-group">
+    <span class="mobile-menu-group-label">Pricing</span>
+    <a href="/#pricing">For Teams</a>
+    <a href="/engineers#pricing">For Engineers</a>
+  </div>
+  <a href="/blog/">Blog</a>
+  <a href="/engineers">For Engineers</a>
   <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Get started free →</a>
 </div>
 
@@ -140,6 +153,7 @@
             <h2>Software Engineer Intern</h2>
             <div class="job-card-meta">
               <span class="job-tag">Engineering</span>
+              <span class="job-tag-closed">Closed</span>
               <span class="job-meta-item">Remote</span>
               <span class="job-meta-item">·</span>
               <span class="job-meta-item">Internship</span>
@@ -153,6 +167,7 @@
             <h2>UI/UX Design Intern</h2>
             <div class="job-card-meta">
               <span class="job-tag">Design</span>
+              <span class="job-tag-closed">Closed</span>
               <span class="job-meta-item">Remote</span>
               <span class="job-meta-item">·</span>
               <span class="job-meta-item">Internship</span>
@@ -185,12 +200,6 @@
   </div>
 </footer>
 
-<script>
-  const nav=document.getElementById('navbar');
-  window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>10)},{passive:true});
-  const toggle=document.getElementById('menu-toggle'),menu=document.getElementById('mobile-menu');
-  toggle?.addEventListener('click',()=>menu.classList.toggle('open'));
-  menu?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('open')));
-</script>
+<script defer src="/nav.js"></script>
 </body>
 </html>

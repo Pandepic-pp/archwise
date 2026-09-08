@@ -3,6 +3,11 @@
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QWQ7Z2LHRV"></script>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7595131862677740" crossorigin="anonymous"></script>
+  <!-- Google Funding Choices: EU/UK consent message for AdSense -->
+  <script async src="https://fundingchoicesmessages.google.com/i/pub-7595131862677740?ers=1"></script>
+  <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -43,6 +48,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" /></noscript>
+  <link rel="stylesheet" href="/nav.css" />
 
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -130,24 +136,6 @@
     .reveal-d2{transition-delay:.2s}
     .reveal-d3{transition-delay:.3s}
     .reveal-d4{transition-delay:.4s}
-
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s,border-color .3s,box-shadow .3s;border-bottom:1px solid transparent}
-    nav.scrolled{background:rgba(247,244,239,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--border);box-shadow:0 1px 20px rgba(74,78,74,.07)}
-    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
-    .nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Sora',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
-    .nav-logo-icon{width:30px;height:30px;background:var(--primary);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white}
-    .nav-badge{font-size:10px;font-weight:600;background:var(--amber-bg);color:#8B6914;border:1px solid rgba(196,166,106,.35);padding:2px 8px;border-radius:20px;letter-spacing:.05em}
-    .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
-    .nav-links a{font-size:14px;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
-    .nav-links a:hover{color:var(--text)}
-    .nav-actions{display:flex;align-items:center;gap:10px}
-    .nav-menu-btn{display:none;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;line-height:0}
-    .mobile-menu{display:none;position:fixed;inset:0;top:65px;background:rgba(247,244,239,.97);backdrop-filter:blur(16px);z-index:99;padding:32px 24px;flex-direction:column;gap:4px;border-top:1px solid var(--border)}
-    .mobile-menu.open{display:flex}
-    .mobile-menu a{font-size:18px;font-weight:500;color:var(--muted);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);transition:color .2s}
-    .mobile-menu a:hover{color:var(--text)}
-    .mobile-menu .btn{margin-top:20px;justify-content:center}
-    .mobile-menu .btn-primary{color:#fff}
 
     #hero{display:flex;align-items:center;padding:96px 0 52px;position:relative;overflow:hidden}
     .hero-bg-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(74,78,74,.13) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none;opacity:.5}
@@ -266,10 +254,6 @@
     @media(max-width:960px){
       :root{--gap:72px}
       .hero-wrap{padding:40px 48px 0}
-      .nav-links{display:none}
-      .nav-menu-btn{display:block}
-      .nav-actions .btn-ghost{display:none}
-      .nav-actions .btn-primary{display:none}
       .hero-inner{grid-template-columns:1fr;gap:40px}
       .hero-diagram{max-width:480px;margin:0 auto}
       .why-pillars{grid-template-columns:1fr 1fr}
@@ -316,16 +300,23 @@
 <nav id="navbar">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <img src="favicon.png" alt="ArchWyse logo" style="width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;">
+      <img src="/favicon.png" alt="ArchWyse logo">
       ArchWyse
     </a>
     <ul class="nav-links">
-      <li><a href="#why">Why</a></li>
-      <li><a href="#features">Features</a></li>
       <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#features">Features</a></li>
+      <li class="nav-dropdown">
+        <button type="button" class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          Pricing
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="#pricing"><strong>For Engineers</strong><span>Interview practice</span></a>
+          <a href="/#pricing"><strong>For Teams</strong><span>Hiring &amp; assessments</span></a>
+        </div>
+      </li>
+      <li><a href="/blog/">Blog</a></li>
     </ul>
     <div class="nav-actions">
       <a href="/" class="btn btn-ghost" style="padding:8px 16px;font-size:14px;">For Organizations</a>
@@ -341,13 +332,15 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobile-menu" role="navigation">
-  <a href="#why" class="mob-link">Why ArchWyse</a>
-  <a href="#features" class="mob-link">Features</a>
-  <a href="#how-it-works" class="mob-link">How It Works</a>
-  <a href="#pricing" class="mob-link">Pricing</a>
-  <a href="#about" class="mob-link">About</a>
-  <a href="#contact" class="mob-link">Contact</a>
-  <a href="/" class="mob-link">For Organizations</a>
+  <a href="#how-it-works">How It Works</a>
+  <a href="#features">Features</a>
+  <div class="mobile-menu-group">
+    <span class="mobile-menu-group-label">Pricing</span>
+    <a href="#pricing">For Engineers</a>
+    <a href="/#pricing">For Teams</a>
+  </div>
+  <a href="/blog/">Blog</a>
+  <a href="/">For Organizations</a>
   <a href="https://app.archwyse.com" target="_blank" rel="noopener" class="btn btn-primary">Start free →</a>
 </div>
 
@@ -744,6 +737,7 @@
   </div>
 </footer>
 
-<script defer src="app.js"></script>
+<script defer src="/nav.js"></script>
+<script defer src="/app.js"></script>
 </body>
 </html>
